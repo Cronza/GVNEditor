@@ -50,8 +50,8 @@
 
 #include <QtWidgets>
 
-#include "treeitem.h"
-#include "treemodel.h"
+#include "ChapterTableItem.h"
+#include "ChapterTable.h"
 
 //! [0]
 TreeModel::TreeModel(const QStringList &headers, const QString &data, QObject *parent)

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>573</width>
+    <height>468</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Editable Tree Model</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
+      <item>
+       <widget class="QLabel" name="Title">
+        <property name="maximumSize">
+         <size>
+          <width>125</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Moonbeam</family>
+          <pointsize>16</pointsize>
+          <weight>75</weight>
+          <italic>false</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>StoryBuilder</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="Version">
+        <property name="font">
+         <font>
+          <family>Moonbeam</family>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Version 1.0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTreeView" name="view">
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectItems</enum>
+      </property>
+      <property name="horizontalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="animated">
+       <bool>false</bool>
+      </property>
+      <property name="allColumnsShowFocus">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>573</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="fileMenu">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="exitAction"/>
+   </widget>
+   <widget class="QMenu" name="actionsMenu">
+    <property name="title">
+     <string>&amp;Actions</string>
+    </property>
+    <addaction name="insertRowAction"/>
+    <addaction name="insertColumnAction"/>
+    <addaction name="separator"/>
+    <addaction name="removeRowAction"/>
+    <addaction name="removeColumnAction"/>
+    <addaction name="separator"/>
+    <addaction name="insertChildAction"/>
+   </widget>
+   <addaction name="fileMenu"/>
+   <addaction name="actionsMenu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="exitAction">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="insertRowAction">
+   <property name="text">
+    <string>Insert Row</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I, R</string>
+   </property>
+  </action>
+  <action name="removeRowAction">
+   <property name="text">
+    <string>Remove Row</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R, R</string>
+   </property>
+  </action>
+  <action name="insertColumnAction">
+   <property name="text">
+    <string>Insert Column</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I, C</string>
+   </property>
+  </action>
+  <action name="removeColumnAction">
+   <property name="text">
+    <string>Remove Column</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R, C</string>
+   </property>
+  </action>
+  <action name="insertChildAction">
+   <property name="text">
+    <string>Insert Child</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

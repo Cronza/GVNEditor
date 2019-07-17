@@ -1,16 +1,21 @@
 QT += widgets
 requires(qtConfig(treeview))
 
-FORMS       = mainwindow.ui
-HEADERS     = mainwindow.h \
-              treeitem.h \
-              treemodel.h
+FORMS       = \
+    MainWindow.ui
+HEADERS     = \
+    MainWindow.h \
+    MainWindow.h \
+    MainWindow.h \
+    StoryBuilder/ChapterTableItem.h \
+    StoryBuilder/ChapterTable.h
 RESOURCES   = \
     GVNEditor.qrc
-SOURCES     = mainwindow.cpp \
-              treeitem.cpp \
-              treemodel.cpp \
-              main.cpp
+SOURCES     = \
+    StoryBuilder/ChapterTableItem.cpp \
+    StoryBuilder/ChapterTable.cpp \
+    MainWindow.cpp \
+    Main.cpp
 
 # install
 target.path = $$[QT_INSTALL_EXAMPLES]/widgets/itemviews/editabletreemodel

@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
-#include "treemodel.h"
+#include "MainWindow.h"
+#include "StoryBuilder\ChapterTable.h"
 
 #include <QFile>
 

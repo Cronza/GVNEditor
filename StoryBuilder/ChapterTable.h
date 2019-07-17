@@ -57,49 +57,70 @@
 
 class TreeItem;
 
-//! [0]
 class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    TreeModel(const QStringList &headers, const QString &data,
-              QObject *parent = 0);
-    ~TreeModel();
-//! [0] //! [1]
+    //Constructor
+    TreeModel(const QStringList &headers, const QString &data, QObject *parent = 0);
 
+    //Deconstructor
+    ~TreeModel() override;
+
+    //Held data
     QVariant data(const QModelIndex &index, int role) const override;
+
+    //Table header
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const override;
 
+    //A trackable index value
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const override;
+
+    //The parent item of an item
     QModelIndex parent(const QModelIndex &index) const override;
 
+    //How many rows and columns exist in the table
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-//! [1]
 
-//! [2]
+    //Use the Qt flag system to define the properties of the table
     Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+    //Set the table of a particuler index
     bool setData(const QModelIndex &index, const QVariant &value,
                  int role = Qt::EditRole) override;
+
+    //Set the header data of the table
     bool setHeaderData(int section, Qt::Orientation orientation,
                        const QVariant &value, int role = Qt::EditRole) override;
 
+    //Insert a column into the table
     bool insertColumns(int position, int columns,
                        const QModelIndex &parent = QModelIndex()) override;
+
+    //Remove a column from the table
     bool removeColumns(int position, int columns,
                        const QModelIndex &parent = QModelIndex()) override;
+
+    //Insert a row into the table
     bool insertRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
+
+    //Remove a row from the table
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
 
 private:
+    //Initial setup function for the table data
     void setupModelData(const QStringList &lines, TreeItem *parent);
+
+    //Retrieve an element from the table
     TreeItem *getItem(const QModelIndex &index) const;
 
+    //The root item for the table
     TreeItem *rootItem;
 };
 //! [2]

@@ -48,37 +48,32 @@
 **
 ****************************************************************************/
 
-#ifndef TREEITEM_H
-#define TREEITEM_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include <QList>
-#include <QVariant>
-#include <QVector>
+#include "ui_mainwindow.h"
 
-//! [0]
-class TreeItem
+#include <QMainWindow>
+#include <QModelIndex>
+
+class MainWindow : public QMainWindow, private Ui::MainWindow
 {
+    Q_OBJECT
+
 public:
-    explicit TreeItem(const QVector<QVariant> &data, TreeItem *parent = 0);
-    ~TreeItem();
+    MainWindow(QWidget *parent = 0);
 
-    TreeItem *child(int number);
-    int childCount() const;
-    int columnCount() const;
-    QVariant data(int column) const;
-    bool insertChildren(int position, int count, int columns);
-    bool insertColumns(int position, int columns);
-    TreeItem *parent();
-    bool removeChildren(int position, int count);
-    bool removeColumns(int position, int columns);
-    int childNumber() const;
-    bool setData(int column, const QVariant &value);
+public slots:
 
-private:
-    QList<TreeItem*> childItems;
-    QVector<QVariant> itemData;
-    TreeItem *parentItem;
+    void updateActions();
+
+private slots:
+    //Define the interaction slots for the interface
+    void insertChild();
+    bool insertColumn();
+    void insertRow();
+    bool removeColumn();
+    void removeRow();
 };
-//! [0]
 
-#endif // TREEITEM_H
+#endif // MAINWINDOW_H
