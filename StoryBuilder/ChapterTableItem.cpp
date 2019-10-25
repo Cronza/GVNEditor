@@ -49,7 +49,7 @@
 ****************************************************************************/
 
 /*
-    treeitem.cpp
+    ChapterTableItem.cpp
 
     A container for items of data supplied by the simple tree model.
 */
@@ -58,100 +58,80 @@
 
 #include <QStringList>
 
-//! [0]
-TreeItem::TreeItem(const QVector<QVariant> &data, TreeItem *parent)
+///Constructor
+ChapterTableItem::ChapterTableItem(const QVector<QVariant> &data, ChapterTableItem *parent)
 {
     parentItem = parent;
     itemData = data;
 }
-//! [0]
 
-//! [1]
-TreeItem::~TreeItem()
+
+///Deconstructor
+ChapterTableItem::~ChapterTableItem()
 {
     qDeleteAll(childItems);
 }
-//! [1]
+
 
 //! [2]
-TreeItem *TreeItem::child(int number)
+ChapterTableItem *ChapterTableItem::child(int number)
 {
     return childItems.value(number);
 }
 //! [2]
 
 //! [3]
-int TreeItem::childCount() const
+int ChapterTableItem::childCount() const
 {
     return childItems.count();
 }
 //! [3]
 
-//! [4]
-int TreeItem::childNumber() const
+///Returns the number of children for this item
+int ChapterTableItem::childNumber() const
 {
     if (parentItem)
-        return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
+        return parentItem->childItems.indexOf(const_cast<ChapterTableItem*>(this));
 
     return 0;
 }
-//! [4]
 
-//! [5]
-int TreeItem::columnCount() const
-{
-    return itemData.count();
-}
-//! [5]
-
-//! [6]
-QVariant TreeItem::data(int column) const
+///Returns the data held by this item
+QVariant ChapterTableItem::data(int column) const
 {
     return itemData.value(column);
 }
-//! [6]
 
-//! [7]
-bool TreeItem::insertChildren(int position, int count, int columns)
+///Adds a row as a child to this item
+bool ChapterTableItem::insertChildRow(int position, int count, int columns)
 {
+    //If a invalid position was supplied
     if (position < 0 || position > childItems.size())
         return false;
 
     for (int row = 0; row < count; ++row) {
         QVector<QVariant> data(columns);
-        TreeItem *item = new TreeItem(data, this);
+        ChapterTableItem *item = new ChapterTableItem(data, this);
         childItems.insert(position, item);
     }
 
     return true;
 }
-//! [7]
 
-//! [8]
-bool TreeItem::insertColumns(int position, int columns)
+//Return the number of columns in this item
+int ChapterTableItem::columnCount() const
 {
-    if (position < 0 || position > itemData.size())
-        return false;
-
-    for (int column = 0; column < columns; ++column)
-        itemData.insert(position, QVariant());
-
-    foreach (TreeItem *child, childItems)
-        child->insertColumns(position, columns);
-
-    return true;
+    return itemData.count();
 }
-//! [8]
 
-//! [9]
-TreeItem *TreeItem::parent()
+//Returns the parent item of this item
+ChapterTableItem *ChapterTableItem::parent()
 {
     return parentItem;
 }
-//! [9]
 
-//! [10]
-bool TreeItem::removeChildren(int position, int count)
+//Removes the first child item of this item
+bool ChapterTableItem::removeChildRow(int position, int count)
 {
     if (position < 0 || position + count > childItems.size())
         return false;
@@ -163,22 +143,8 @@ bool TreeItem::removeChildren(int position, int count)
 }
 //! [10]
 
-bool TreeItem::removeColumns(int position, int columns)
-{
-    if (position < 0 || position + columns > itemData.size())
-        return false;
-
-    for (int column = 0; column < columns; ++column)
-        itemData.remove(position);
-
-    foreach (TreeItem *child, childItems)
-        child->removeColumns(position, columns);
-
-    return true;
-}
-
 //! [11]
-bool TreeItem::setData(int column, const QVariant &value)
+bool ChapterTableItem::setData(int column, const QVariant &value)
 {
     if (column < 0 || column >= itemData.size())
         return false;

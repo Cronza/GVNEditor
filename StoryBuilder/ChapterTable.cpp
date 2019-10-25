@@ -53,69 +53,66 @@
 #include "ChapterTableItem.h"
 #include "ChapterTable.h"
 
-//! [0]
-TreeModel::TreeModel(const QStringList &headers, const QString &data, QObject *parent)
+///Constructor
+ChapterTable::ChapterTable(const QStringList &headers, const QString &data, QObject *parent)
     : QAbstractItemModel(parent)
 {
+    //For each header, add it to the root data list
     QVector<QVariant> rootData;
     foreach (QString header, headers)
         rootData << header;
 
-    rootItem = new TreeItem(rootData);
+    //Create the "header "bar" of the table
+    rootItem = new ChapterTableItem(rootData);
     setupModelData(data.split(QString("\n")), rootItem);
 }
-//! [0]
 
-//! [1]
-TreeModel::~TreeModel()
+///Destructor
+ChapterTable::~ChapterTable()
 {
     delete rootItem;
 }
-//! [1]
 
-//! [2]
-int TreeModel::columnCount(const QModelIndex & /* parent */) const
+///A union representing the data of the table
+QVariant ChapterTable::data(const QModelIndex &index, int role) const
 {
-    return rootItem->columnCount();
-}
-//! [2]
-
-QVariant TreeModel::data(const QModelIndex &index, int role) const
-{
+    //If the index is valid, return a QVariant instance
     if (!index.isValid())
         return QVariant();
 
+    //If the correct role is assigned, return a QVariant instance
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
-    TreeItem *item = getItem(index);
+    //Create a table item
+    ChapterTableItem *item = getItem(index);
 
+    //Return the data from the generated item object
     return item->data(index.column());
 }
 
-//! [3]
-Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
+///Use the Qt flag system to define properties of the table
+Qt::ItemFlags ChapterTable::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return 0;
 
     return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
 }
-//! [3]
 
-//! [4]
-TreeItem *TreeModel::getItem(const QModelIndex &index) const
+///If the provided index is valid, return a pointer to the item associated with that index
+ChapterTableItem *ChapterTable::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+        ChapterTableItem *item = static_cast<ChapterTableItem*>(index.internalPointer());
         if (item)
             return item;
     }
     return rootItem;
 }
-//! [4]
 
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
+///Returns the
+QVariant ChapterTable::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -124,104 +121,86 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-//! [5]
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
+//Retrieve an object representing the slot information for the given table position
+QModelIndex ChapterTable::index(int row, int column, const QModelIndex &parent) const
 {
+    //Unsure what this does...................................
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
-//! [5]
 
-//! [6]
-    TreeItem *parentItem = getItem(parent);
+    //Get the parent of this item
+    ChapterTableItem *parentItem = getItem(parent);
 
-    TreeItem *childItem = parentItem->child(row);
+    //Get the child of this item
+    ChapterTableItem *childItem = parentItem->child(row);
+
+    //If a child
     if (childItem)
         return createIndex(row, column, childItem);
     else
         return QModelIndex();
 }
-//! [6]
 
-bool TreeModel::insertColumns(int position, int columns, const QModelIndex &parent)
+///Requests that the selected item create a row either as a child, or a succeeding element
+bool ChapterTable::insertRows(int position, int rows, const QModelIndex &parent)
 {
-    bool success;
-
-    beginInsertColumns(parent, position, position + columns - 1);
-    success = rootItem->insertColumns(position, columns);
-    endInsertColumns();
-
-    return success;
-}
-
-bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
-{
-    TreeItem *parentItem = getItem(parent);
+    ChapterTableItem *parentItem = getItem(parent);
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, rootItem->columnCount());
+    success = parentItem->insertChildRow(position, rows, rootItem->columnCount());
     endInsertRows();
 
     return success;
 }
 
 //! [7]
-QModelIndex TreeModel::parent(const QModelIndex &index) const
+QModelIndex ChapterTable::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem *childItem = getItem(index);
-    TreeItem *parentItem = childItem->parent();
+    ChapterTableItem *childItem = getItem(index);
+    ChapterTableItem *parentItem = childItem->parent();
 
     if (parentItem == rootItem)
         return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
 }
-//! [7]
 
-bool TreeModel::removeColumns(int position, int columns, const QModelIndex &parent)
+///Returns the number of columns in the table
+int ChapterTable::columnCount(const QModelIndex & /* parent */) const
 {
-    bool success;
-
-    beginRemoveColumns(parent, position, position + columns - 1);
-    success = rootItem->removeColumns(position, columns);
-    endRemoveColumns();
-
-    if (rootItem->columnCount() == 0)
-        removeRows(0, rowCount());
-
-    return success;
+    return rootItem->columnCount();
 }
-
-bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
+bool ChapterTable::removeRows(int position, int rows, const QModelIndex &parent)
 {
-    TreeItem *parentItem = getItem(parent);
+    ChapterTableItem *parentItem = getItem(parent);
     bool success = true;
 
     beginRemoveRows(parent, position, position + rows - 1);
-    success = parentItem->removeChildren(position, rows);
+    success = parentItem->removeChildRow(position, rows);
     endRemoveRows();
 
     return success;
 }
 
 //! [8]
-int TreeModel::rowCount(const QModelIndex &parent) const
+int ChapterTable::rowCount(const QModelIndex &parent) const
 {
-    TreeItem *parentItem = getItem(parent);
+    ChapterTableItem *parentItem = getItem(parent);
 
     return parentItem->childCount();
 }
 //! [8]
 
-bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool ChapterTable::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
         return false;
 
-    TreeItem *item = getItem(index);
+    ChapterTableItem *item = getItem(index);
     bool result = item->setData(index.column(), value);
 
     if (result)
@@ -230,7 +209,7 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     return result;
 }
 
-bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
+bool ChapterTable::setHeaderData(int section, Qt::Orientation orientation,
                               const QVariant &value, int role)
 {
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
@@ -244,9 +223,10 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
-void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
+///Configure the table data
+void ChapterTable::setupModelData(const QStringList &lines, ChapterTableItem *parent)
 {
-    QList<TreeItem*> parents;
+    QList<ChapterTableItem*> parents;
     QList<int> indentations;
     parents << parent;
     indentations << 0;
@@ -286,8 +266,8 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
             }
 
             // Append a new item to the current parent's list of children.
-            TreeItem *parent = parents.last();
-            parent->insertChildren(parent->childCount(), 1, rootItem->columnCount());
+            ChapterTableItem *parent = parents.last();
+            parent->insertChildRow(parent->childCount(), 1, rootItem->columnCount());
             for (int column = 0; column < columnData.size(); ++column)
                 parent->child(parent->childCount() - 1)->setData(column, columnData[column]);
         }

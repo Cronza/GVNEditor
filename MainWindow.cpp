@@ -48,111 +48,113 @@
 **
 ****************************************************************************/
 
+/*This script uses generic model references to avoid dependencies on particular files*/
+
 #include "MainWindow.h"
 #include "StoryBuilder\ChapterTable.h"
-
+#include "QDebug"
 #include <QFile>
 
+///Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    //Generate the UI C++ from the .ui XML form
     setupUi(this);
 
+    //Create the headers for the table using the 'tr()' localization functions
     QStringList headers;
-    headers << tr("Title") << tr("Description");
+    headers << tr("Speaker");
+    headers << tr("Dialogue");
 
+    //Read a demo dialogue file in
     QFile file(":/default.txt");
     file.open(QIODevice::ReadOnly);
-    TreeModel *model = new TreeModel(headers, file.readAll());
+
+    //Create the main table object, and pass in the text read in from the demo dialogue file
+    ChapterTable *table = new ChapterTable(headers, file.readAll());
     file.close();
 
-    view->setModel(model);
-    for (int column = 0; column < model->columnCount(); ++column)
+    //Set the data model used by the view
+    view->setModel(table);
+
+    //Resize each column based on the size of its contents
+    for (int column = 0; column < table->columnCount(); ++column)
         view->resizeColumnToContents(column);
 
+    //----------------- INTERACTIVITY ---------------------
+
+    //Setup functionality for exiting the program
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
+    //Setup functionality for selecting elements in the table
     connect(view->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &MainWindow::updateActions);
 
+    //Setup functionality for menu bar options
     connect(actionsMenu, &QMenu::aboutToShow, this, &MainWindow::updateActions);
     connect(insertRowAction, &QAction::triggered, this, &MainWindow::insertRow);
-    connect(insertColumnAction, &QAction::triggered, this, &MainWindow::insertColumn);
     connect(removeRowAction, &QAction::triggered, this, &MainWindow::removeRow);
-    connect(removeColumnAction, &QAction::triggered, this, &MainWindow::removeColumn);
-    connect(insertChildAction, &QAction::triggered, this, &MainWindow::insertChild);
 
+    //Tell Qt to recognize the new connections
     updateActions();
 }
 
-void MainWindow::insertChild()
-{
-    QModelIndex index = view->selectionModel()->currentIndex();
-    QAbstractItemModel *model = view->model();
+///Create a child item under the currently selected item
+//void MainWindow::insertChild()
+//{
+//    //Grab references to the data model and selected item
+//    QModelIndex index = view->selectionModel()->currentIndex();
+//    QAbstractItemModel *model = view->model();
+//
+//    //Are there any columns currently? If not, add an initial one
+//    if (model->columnCount(index) == 0) {
+//        if (!model->insertColumn(0, index))
+//            return;
+//    }
+//
+//    //Are there any rows currently? If not, add an initial one
+//    if (!model->insertRow(0, index))
+//        return;
+//
+//    //Loop through each column, adding a child item to each under the selected item
+//    for (int column = 0; column < model->columnCount(index); ++column) {
+//        QModelIndex child = model->index(0, column, index);
+//        model->setData(child, QVariant("[No data]"), Qt::EditRole);
+//
+//        //if (!model->headerData(column, Qt::Horizontal).isValid())
+//        //    model->setHeaderData(column, Qt::Horizontal, QVariant("[No header]"), Qt::EditRole);
+//    }
+//
+//    //Change selection to the new child item
+//    view->selectionModel()->setCurrentIndex(model->index(0, 0, index),
+//                                            QItemSelectionModel::ClearAndSelect);
+//
+//    //Update available actions
+//    updateActions();
+//}
 
-    if (model->columnCount(index) == 0) {
-        if (!model->insertColumn(0, index))
-            return;
-    }
 
-    if (!model->insertRow(0, index))
-        return;
-
-    for (int column = 0; column < model->columnCount(index); ++column) {
-        QModelIndex child = model->index(0, column, index);
-        model->setData(child, QVariant("[No data]"), Qt::EditRole);
-        if (!model->headerData(column, Qt::Horizontal).isValid())
-            model->setHeaderData(column, Qt::Horizontal, QVariant("[No header]"), Qt::EditRole);
-    }
-
-    view->selectionModel()->setCurrentIndex(model->index(0, 0, index),
-                                            QItemSelectionModel::ClearAndSelect);
-    updateActions();
-}
-
-bool MainWindow::insertColumn()
-{
-    QAbstractItemModel *model = view->model();
-    int column = view->selectionModel()->currentIndex().column();
-
-    // Insert a column in the parent item.
-    bool changed = model->insertColumn(column + 1);
-    if (changed)
-        model->setHeaderData(column + 1, Qt::Horizontal, QVariant("[No header]"), Qt::EditRole);
-
-    updateActions();
-
-    return changed;
-}
-
+///Adds a row under of the currently selected row
 void MainWindow::insertRow()
 {
+    //Grab references to the data model and selected item
     QModelIndex index = view->selectionModel()->currentIndex();
     QAbstractItemModel *model = view->model();
 
+    //Create the row, and check whether it was successfully created
     if (!model->insertRow(index.row()+1, index.parent()))
         return;
 
+    //Update available actions
     updateActions();
 
+    //Loop through each column,
     for (int column = 0; column < model->columnCount(index.parent()); ++column) {
         QModelIndex child = model->index(index.row()+1, column, index.parent());
         model->setData(child, QVariant("[No data]"), Qt::EditRole);
     }
-}
 
-bool MainWindow::removeColumn()
-{
-    QAbstractItemModel *model = view->model();
-    int column = view->selectionModel()->currentIndex().column();
-
-    // Insert columns in each child of the parent item.
-    bool changed = model->removeColumn(column);
-
-    if (changed)
-        updateActions();
-
-    return changed;
 }
 
 void MainWindow::removeRow()

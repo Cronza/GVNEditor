@@ -52,7 +52,7 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
-
+#include "StoryBuilder\ChapterTable.h"
 #include <QMainWindow>
 #include <QModelIndex>
 
@@ -61,19 +61,22 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
     Q_OBJECT
 
 public:
+    // The main window object
     MainWindow(QWidget *parent = 0);
 
-public slots:
+    //The table object
+    ChapterTable *table;
 
+public slots:
+    //Slot for updating the actions available
     void updateActions();
 
 private slots:
     //Define the interaction slots for the interface
-    void insertChild();
-    bool insertColumn();
-    void insertRow();
-    bool removeColumn();
+    //void insertChild();
     void removeRow();
+    void insertRow();
+
 };
 
 #endif // MAINWINDOW_H

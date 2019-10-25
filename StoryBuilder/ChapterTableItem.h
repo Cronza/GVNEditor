@@ -48,33 +48,31 @@
 **
 ****************************************************************************/
 
-#ifndef TREEITEM_H
-#define TREEITEM_H
+#ifndef ChapterTableItem_H
+#define ChapterTableItem_H
 
 #include <QList>
 #include <QVariant>
 #include <QVector>
 
-class TreeItem
+class ChapterTableItem
 {
 public:
-    explicit TreeItem(const QVector<QVariant> &data, TreeItem *parent = 0);
-    ~TreeItem();
+    explicit ChapterTableItem(const QVector<QVariant> &data, ChapterTableItem *parent = 0);
+    ~ChapterTableItem();
 
     //Define fields for child objects
-    TreeItem *child(int number);
+    ChapterTableItem *child(int number);
     int childCount() const;
     int columnCount() const;
 
     //Define fields for held data
     QVariant data(int column) const;
-    bool insertChildren(int position, int count, int columns);
-    bool insertColumns(int position, int columns);
+    bool insertChildRow(int position, int count, int columns);
 
     //Define fields for parent objects
-    TreeItem *parent();
-    bool removeChildren(int position, int count);
-    bool removeColumns(int position, int columns);
+    ChapterTableItem *parent();
+    bool removeChildRow(int position, int count);
 
     //Define a field for the total children count
     int childNumber() const;
@@ -83,10 +81,10 @@ public:
     bool setData(int column, const QVariant &value);
 
 private:
-    //Define fields for internal data
-    QList<TreeItem*> childItems;
+    ///Define fields for internal data
+    QList<ChapterTableItem*> childItems;
     QVector<QVariant> itemData;
-    TreeItem *parentItem;
+    ChapterTableItem *parentItem;
 };
 
-#endif // TREEITEM_H
+#endif // ChapterTableItem_H

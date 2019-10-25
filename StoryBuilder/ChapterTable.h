@@ -48,81 +48,75 @@
 **
 ****************************************************************************/
 
-#ifndef TREEMODEL_H
-#define TREEMODEL_H
+#ifndef ChapterTable_H
+#define ChapterTable_H
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
 
-class TreeItem;
+class ChapterTableItem;
 
-class TreeModel : public QAbstractItemModel
+class ChapterTable : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    //Constructor
-    TreeModel(const QStringList &headers, const QString &data, QObject *parent = 0);
+    ///Constructor
+    ChapterTable(const QStringList &headers, const QString &data, QObject *parent = 0);
 
-    //Deconstructor
-    ~TreeModel() override;
+    ///Deconstructor
+    ~ChapterTable() override;
 
-    //Held data
+    ///Held data
     QVariant data(const QModelIndex &index, int role) const override;
 
-    //Table header
+    ///Table header
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const override;
 
-    //A trackable index value
+    ///A trackable index value
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const override;
 
-    //The parent item of an item
+    ///The parent item of an item
     QModelIndex parent(const QModelIndex &index) const override;
 
-    //How many rows and columns exist in the table
+    ///How many rows exist in the table
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    ///How many columns exist in the table
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    //Use the Qt flag system to define the properties of the table
+    ///Use the Qt flag system to define the properties of the table
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    //Set the table of a particuler index
+    ///Set the data of a particuler index
     bool setData(const QModelIndex &index, const QVariant &value,
                  int role = Qt::EditRole) override;
 
-    //Set the header data of the table
+    ///Set the header data of the table
     bool setHeaderData(int section, Qt::Orientation orientation,
                        const QVariant &value, int role = Qt::EditRole) override;
 
-    //Insert a column into the table
-    bool insertColumns(int position, int columns,
-                       const QModelIndex &parent = QModelIndex()) override;
-
-    //Remove a column from the table
-    bool removeColumns(int position, int columns,
-                       const QModelIndex &parent = QModelIndex()) override;
-
-    //Insert a row into the table
+    ///Insert a row into the table
     bool insertRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
 
-    //Remove a row from the table
+    ///Remove a row from the table
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
 
 private:
-    //Initial setup function for the table data
-    void setupModelData(const QStringList &lines, TreeItem *parent);
+    ///Initial setup function for the table data
+    void setupModelData(const QStringList &lines, ChapterTableItem *parent);
 
-    //Retrieve an element from the table
-    TreeItem *getItem(const QModelIndex &index) const;
+    ///Retrieve an element from the table
+    ChapterTableItem *getItem(const QModelIndex &index) const;
 
-    //The root item for the table
-    TreeItem *rootItem;
+    ///The root item for the table
+    ChapterTableItem *rootItem;
 };
 //! [2]
 
-#endif // TREEMODEL_H
+#endif // ChapterTable_H

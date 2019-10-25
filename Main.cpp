@@ -56,8 +56,13 @@ int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(GVNEditor);
 
+    //Build the core application object (Handles the underlying control logic)
     QApplication app(argc, argv);
+
+    //Build the core window (The GUI interface) and reveal it
     MainWindow window;
     window.show();
+
+    //Return the app's main loop event
     return app.exec();
 }
