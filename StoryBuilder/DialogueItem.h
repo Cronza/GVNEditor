@@ -48,30 +48,30 @@
 **
 ****************************************************************************/
 
-#ifndef ChapterTableItem_H
-#define ChapterTableItem_H
+#ifndef DialogueItem_H
+#define DialogueItem_H
 
 #include <QList>
 #include <QVariant>
 #include <QVector>
 
-class ChapterTableItem
+class DialogueItem
 {
 public:
-    explicit ChapterTableItem(const QVector<QVariant> &data, ChapterTableItem *parent = 0);
-    ~ChapterTableItem();
+    explicit DialogueItem(const QVector<QVariant> &data, DialogueItem *parent = 0);
+    ~DialogueItem();
 
     //Define fields for child objects
-    ChapterTableItem *child(int number);
+    DialogueItem *child(int number);
     int childCount() const;
     int columnCount() const;
 
     //Define fields for held data
     QVariant data(int column) const;
-    bool insertChildRow(int position, int count, int columns);
+    DialogueItem* insertChildRow(int position, int columns);
 
     //Define fields for parent objects
-    ChapterTableItem *parent();
+    DialogueItem *parent();
     bool removeChildRow(int position, int count);
 
     //Define a field for the total children count
@@ -82,9 +82,9 @@ public:
 
 private:
     ///Define fields for internal data
-    QList<ChapterTableItem*> childItems;
+    QList<DialogueItem*> childItems;
     QVector<QVariant> itemData;
-    ChapterTableItem *parentItem;
+    DialogueItem *parentItem;
 };
 
-#endif // ChapterTableItem_H
+#endif // DialogueItem_H

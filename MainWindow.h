@@ -55,6 +55,7 @@
 #include "StoryBuilder\ChapterTable.h"
 #include <QMainWindow>
 #include <QModelIndex>
+#include <QFile>
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
@@ -64,12 +65,11 @@ public:
     // The main window object
     MainWindow(QWidget *parent = 0);
 
+    ///Given a file path, reads the data in and generates the dialogue table for it
+    void LoadFile(QString filePat);
+
     //The table object
     ChapterTable *table;
-
-public slots:
-    //Slot for updating the actions available
-    void updateActions();
 
 private slots:
     //Define the interaction slots for the interface

@@ -49,17 +49,17 @@
 ****************************************************************************/
 
 /*
-    ChapterTableItem.cpp
+    DialogueItem.cpp
 
     A container for items of data supplied by the simple tree model.
 */
 
-#include "ChapterTableItem.h"
+#include "DialogueItem.h"
 
 #include <QStringList>
 
 ///Constructor
-ChapterTableItem::ChapterTableItem(const QVector<QVariant> &data, ChapterTableItem *parent)
+DialogueItem::DialogueItem(const QVector<QVariant> &data, DialogueItem *parent)
 {
     parentItem = parent;
     itemData = data;
@@ -67,71 +67,67 @@ ChapterTableItem::ChapterTableItem(const QVector<QVariant> &data, ChapterTableIt
 
 
 ///Deconstructor
-ChapterTableItem::~ChapterTableItem()
+DialogueItem::~DialogueItem()
 {
     qDeleteAll(childItems);
 }
 
 
 //! [2]
-ChapterTableItem *ChapterTableItem::child(int number)
+DialogueItem *DialogueItem::child(int number)
 {
     return childItems.value(number);
 }
 //! [2]
 
 //! [3]
-int ChapterTableItem::childCount() const
+int DialogueItem::childCount() const
 {
     return childItems.count();
 }
 //! [3]
 
 ///Returns the number of children for this item
-int ChapterTableItem::childNumber() const
+int DialogueItem::childNumber() const
 {
     if (parentItem)
-        return parentItem->childItems.indexOf(const_cast<ChapterTableItem*>(this));
+        return parentItem->childItems.indexOf(const_cast<DialogueItem*>(this));
 
     return 0;
 }
 
 ///Returns the data held by this item
-QVariant ChapterTableItem::data(int column) const
+QVariant DialogueItem::data(int column) const
 {
     return itemData.value(column);
 }
 
 ///Adds a row as a child to this item
-bool ChapterTableItem::insertChildRow(int position, int count, int columns)
+DialogueItem* DialogueItem::insertChildRow(int position, int columns)
 {
-    //If a invalid position was supplied
-    if (position < 0 || position > childItems.size())
-        return false;
+    QVector<QVariant> data(columns);
+    DialogueItem *item = new DialogueItem(data, this);
+    childItems.insert(position, item);
 
-    for (int row = 0; row < count; ++row) {
-        QVector<QVariant> data(columns);
-        ChapterTableItem *item = new ChapterTableItem(data, this);
-        childItems.insert(position, item);
-    }
-
-    return true;
+    return item;
 }
 
+
+
 //Return the number of columns in this item
-int ChapterTableItem::columnCount() const
+int DialogueItem::columnCount() const
 {
     return itemData.count();
 }
 
 //Returns the parent item of this item
-ChapterTableItem *ChapterTableItem::parent()
+DialogueItem *DialogueItem::parent()
 {
     return parentItem;
 }
 
 //Removes the first child item of this item
-bool ChapterTableItem::removeChildRow(int position, int count)
+bool DialogueItem::removeChildRow(int position, int count)
 {
     if (position < 0 || position + count > childItems.size())
         return false;
@@ -144,7 +140,7 @@ bool ChapterTableItem::removeChildRow(int position, int count)
 //! [10]
 
 //! [11]
-bool ChapterTableItem::setData(int column, const QVariant &value)
+bool DialogueItem::setData(int column, const QVariant &value)
 {
     if (column < 0 || column >= itemData.size())
         return false;

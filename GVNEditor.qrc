@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/" >
+    <qresource prefix="/">
         <file>default.txt</file>
+        <file>Example_Story_Data.xml</file>
     </qresource>
 </RCC>

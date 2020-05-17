@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Editable Tree Model</string>
+   <string>StoryBuilder</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -27,7 +27,7 @@
        <widget class="QLabel" name="Title">
         <property name="maximumSize">
          <size>
-          <width>125</width>
+          <width>200</width>
           <height>16777215</height>
          </size>
         </property>
@@ -89,7 +89,7 @@
      <x>0</x>
      <y>0</y>
      <width>573</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">

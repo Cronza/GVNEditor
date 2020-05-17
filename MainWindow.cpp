@@ -59,16 +59,28 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    //Generate the UI C++ from the .ui XML form
+    //Generate the UI C++ from the .ui XML form. Build objects from each of the .ui form widgets
     setupUi(this);
 
+    //----------------- INTERACTIVITY ---------------------
+
+    //Setup functionality for exiting the program
+    connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+
+    //Setup functionality for menu bar options
+    connect(insertRowAction, &QAction::triggered, this, &MainWindow::insertRow);
+    connect(removeRowAction, &QAction::triggered, this, &MainWindow::removeRow);
+}
+
+void MainWindow::LoadFile(QString filePath)
+{
     //Create the headers for the table using the 'tr()' localization functions
     QStringList headers;
-    headers << tr("Speaker");
-    headers << tr("Dialogue");
+    headers << tr("Speaker"); //Needs investigating into why tr doesnt work when this isnt a static class
+    headers << tr("Dialogue"); //Needs investigating into why tr doesnt work when this isnt a static class
 
-    //Read a demo dialogue file in
-    QFile file(":/default.txt");
+    //Read a dialogue file in
+    QFile file(filePath);
     file.open(QIODevice::ReadOnly);
 
     //Create the main table object, and pass in the text read in from the demo dialogue file
@@ -81,59 +93,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Resize each column based on the size of its contents
     for (int column = 0; column < table->columnCount(); ++column)
         view->resizeColumnToContents(column);
-
-    //----------------- INTERACTIVITY ---------------------
-
-    //Setup functionality for exiting the program
-    connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-
-    //Setup functionality for selecting elements in the table
-    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &MainWindow::updateActions);
-
-    //Setup functionality for menu bar options
-    connect(actionsMenu, &QMenu::aboutToShow, this, &MainWindow::updateActions);
-    connect(insertRowAction, &QAction::triggered, this, &MainWindow::insertRow);
-    connect(removeRowAction, &QAction::triggered, this, &MainWindow::removeRow);
-
-    //Tell Qt to recognize the new connections
-    updateActions();
 }
-
-///Create a child item under the currently selected item
-//void MainWindow::insertChild()
-//{
-//    //Grab references to the data model and selected item
-//    QModelIndex index = view->selectionModel()->currentIndex();
-//    QAbstractItemModel *model = view->model();
-//
-//    //Are there any columns currently? If not, add an initial one
-//    if (model->columnCount(index) == 0) {
-//        if (!model->insertColumn(0, index))
-//            return;
-//    }
-//
-//    //Are there any rows currently? If not, add an initial one
-//    if (!model->insertRow(0, index))
-//        return;
-//
-//    //Loop through each column, adding a child item to each under the selected item
-//    for (int column = 0; column < model->columnCount(index); ++column) {
-//        QModelIndex child = model->index(0, column, index);
-//        model->setData(child, QVariant("[No data]"), Qt::EditRole);
-//
-//        //if (!model->headerData(column, Qt::Horizontal).isValid())
-//        //    model->setHeaderData(column, Qt::Horizontal, QVariant("[No header]"), Qt::EditRole);
-//    }
-//
-//    //Change selection to the new child item
-//    view->selectionModel()->setCurrentIndex(model->index(0, 0, index),
-//                                            QItemSelectionModel::ClearAndSelect);
-//
-//    //Update available actions
-//    updateActions();
-//}
-
 
 ///Adds a row under of the currently selected row
 void MainWindow::insertRow()
@@ -146,9 +106,6 @@ void MainWindow::insertRow()
     if (!model->insertRow(index.row()+1, index.parent()))
         return;
 
-    //Update available actions
-    updateActions();
-
     //Loop through each column,
     for (int column = 0; column < model->columnCount(index.parent()); ++column) {
         QModelIndex child = model->index(index.row()+1, column, index.parent());
@@ -157,32 +114,15 @@ void MainWindow::insertRow()
 
 }
 
+///Removes the User Selected Row from the table
 void MainWindow::removeRow()
 {
+    //Grab the currently selected row
     QModelIndex index = view->selectionModel()->currentIndex();
+
+    //Grab a reference to the view model
     QAbstractItemModel *model = view->model();
-    if (model->removeRow(index.row(), index.parent()))
-        updateActions();
-}
 
-void MainWindow::updateActions()
-{
-    bool hasSelection = !view->selectionModel()->selection().isEmpty();
-    removeRowAction->setEnabled(hasSelection);
-    removeColumnAction->setEnabled(hasSelection);
-
-    bool hasCurrent = view->selectionModel()->currentIndex().isValid();
-    insertRowAction->setEnabled(hasCurrent);
-    insertColumnAction->setEnabled(hasCurrent);
-
-    if (hasCurrent) {
-        view->closePersistentEditor(view->selectionModel()->currentIndex());
-
-        int row = view->selectionModel()->currentIndex().row();
-        int column = view->selectionModel()->currentIndex().column();
-        if (view->selectionModel()->currentIndex().parent().isValid())
-            statusBar()->showMessage(tr("Position: (%1,%2)").arg(row).arg(column));
-        else
-            statusBar()->showMessage(tr("Position: (%1,%2) in top level").arg(row).arg(column));
-    }
+    //Ask the model to remove the row
+    model->removeRow(index.row(), index.parent());
 }

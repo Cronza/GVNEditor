@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent>
+  <Asset Type="GVNXMLData.StoryChapter">
+    <ChapterName>Intro</ChapterName>
+    <ChapterText>
+      <Item>
+        <Item>Trias Mirion</Item>
+        <Item>Hello and Welcome</Item>
+        <Item>Characters/01_Trias_Mirion/Trias_Mirion_Normal</Item>
+      </Item>
+      <Item>
+        <Item>Trias Mirion</Item>
+        <Item>This is the first chapter, or a test really</Item>
+        <Item>Characters/01_Trias_Mirion/Trias_Mirion_Concerned</Item>
+      </Item>
+      <Item>
+        <Item>Trias Mirion</Item>
+        <Item>Please Enjoy</Item>
+        <Item>Characters/01_Trias_Mirion/Trias_Mirion_Normal</Item>
+      </Item>
+	  <Item>
+        <Item>Trias Mirion</Item>
+        <Item>Or don't, up to you!</Item>
+        <Item>Characters/01_Trias_Mirion/Trias_Mirion_Concerned</Item>
+      </Item>
+    </ChapterText>
+  </Asset>
+</XnaContent>

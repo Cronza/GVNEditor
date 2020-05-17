@@ -60,8 +60,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     //Build the core window (The GUI interface) and reveal it
-    MainWindow window;
-    window.show();
+    MainWindow editor;
+    editor.LoadFile(":/default.txt");
+    editor.show();
 
     //Return the app's main loop event
     return app.exec();
