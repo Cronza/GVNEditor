@@ -55,7 +55,7 @@
 #include <QModelIndex>
 #include <QVariant>
 
-class DialogueItem;
+#include "DialogueItem.h"
 
 class ChapterTable : public QAbstractItemModel
 {
@@ -63,7 +63,7 @@ class ChapterTable : public QAbstractItemModel
 
 public:
     ///Constructor
-    ChapterTable(const QStringList &headers, const QString &data, QObject *parent = 0);
+    ChapterTable(const QStringList &headers, const QString &data);
 
     ///Deconstructor
     ~ChapterTable() override;

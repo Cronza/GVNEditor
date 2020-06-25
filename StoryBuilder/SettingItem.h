@@ -58,7 +58,9 @@
 class SettingItem
 {
 public:
-    explicit SettingItem(const QVector<QVariant> &data, SettingItem *parent = 0);
+    SettingItem(const QVector<QVariant> &data, SettingItem *parent = 0);
+
+    //Destructor
     ~SettingItem();
 
     //Define fields for held data

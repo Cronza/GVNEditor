@@ -137,7 +137,6 @@ bool DialogueItem::removeChildRow(int position, int count)
 
     return true;
 }
-//! [10]
 
 //! [11]
 bool DialogueItem::setData(int column, const QVariant &value)

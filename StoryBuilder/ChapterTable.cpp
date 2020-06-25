@@ -55,8 +55,8 @@
 #include "ChapterTable.h"
 
 ///Constructor
-ChapterTable::ChapterTable(const QStringList &headers, const QString &data, QObject *parent)
-    : QAbstractItemModel(parent)
+ChapterTable::ChapterTable(const QStringList &headers, const QString &data)
+    : QAbstractItemModel()
 {
     //For each header, add it to the root data list
     QVector<QVariant> rootData;
@@ -67,6 +67,7 @@ ChapterTable::ChapterTable(const QStringList &headers, const QString &data, QObj
     rootItem = new DialogueItem(rootData);
 
     //Setup each of the table items
+    qDebug() << data;
     setupModelData(data.split(QString("\n")), rootItem);
 }
 

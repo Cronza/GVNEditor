@@ -62,8 +62,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
     Q_OBJECT
 
 public:
-    // The main window object
-    MainWindow(QWidget *parent = 0);
+    // Constructor
+    MainWindow();
 
     ///Given a file path, reads the data in and generates the dialogue table for it
     void LoadFile(QString filePat);
@@ -73,7 +73,6 @@ public:
 
 private slots:
     //Define the interaction slots for the interface
-    //void insertChild();
     void removeRow();
     void insertRow();
 

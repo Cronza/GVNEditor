@@ -56,8 +56,7 @@
 #include <QFile>
 
 ///Constructor
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow() : QMainWindow()
 {
     //Generate the UI C++ from the .ui XML form. Build objects from each of the .ui form widgets
     setupUi(this);

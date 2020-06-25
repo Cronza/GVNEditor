@@ -58,7 +58,9 @@
 class DialogueItem
 {
 public:
-    explicit DialogueItem(const QVector<QVariant> &data, DialogueItem *parent = 0);
+    DialogueItem(const QVector<QVariant> &data, DialogueItem *parent = 0);
+
+    //Destructor
     ~DialogueItem();
 
     //Define fields for child objects
