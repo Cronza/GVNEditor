@@ -56,6 +56,7 @@
 #include <QMainWindow>
 #include <QModelIndex>
 #include <QFile>
+#include <QFileDialog>
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
@@ -65,16 +66,17 @@ public:
     // Constructor
     MainWindow();
 
-    ///Given a file path, reads the data in and generates the dialogue table for it
-    void LoadFile(QString filePat);
+    ///Creates the Table holding Dialogue Story Data
+    void CreateChapterTable();
 
     //The table object
     ChapterTable *table;
 
 private slots:
-    //Define the interaction slots for the interface
-    void removeRow();
-    void insertRow();
+    //Define interactive elements
+    void RemoveRow();
+    void InsertRow();
+    void LoadStoryData();
 
 };
 

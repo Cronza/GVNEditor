@@ -72,22 +72,20 @@ SettingItem::~SettingItem()
 
 }
 
-///Returns the data held by this item
-QVariant SettingItem::data(int column) const
+QVariant SettingItem::GetData(int column) const
 {
     return itemData.value(column);
 }
 
 
 
-//Returns the parent item of this item
-SettingItem *SettingItem::parent()
+SettingItem *SettingItem::GetParent()
 {
     return parentItem;
 }
 
-//! [11]
-bool SettingItem::setData(int column, const QVariant &value)
+
+bool SettingItem::SetData(int column, const QVariant &value)
 {
     if (column < 0 || column >= itemData.size())
         return false;
@@ -95,4 +93,4 @@ bool SettingItem::setData(int column, const QVariant &value)
     itemData[column] = value;
     return true;
 }
-//! [11]
+

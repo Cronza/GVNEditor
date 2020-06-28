@@ -55,9 +55,10 @@
 #include "ChapterTable.h"
 
 ///Constructor
-ChapterTable::ChapterTable(const QStringList &headers, const QString &data)
+ChapterTable::ChapterTable(const QStringList &headers)
     : QAbstractItemModel()
 {
+    qDebug() << "Chapter Table Constructor Function";
     //For each header, add it to the root data list
     QVector<QVariant> rootData;
     foreach (QString header, headers)
@@ -66,9 +67,7 @@ ChapterTable::ChapterTable(const QStringList &headers, const QString &data)
     //Create the "header "bar" of the table
     rootItem = new DialogueItem(rootData);
 
-    //Setup each of the table items
-    qDebug() << data;
-    setupModelData(data.split(QString("\n")), rootItem);
+    UpdateTableData("D:\\Scripts\\build-GVNEditor-Desktop_Qt_5_12_0_MinGW_64_bit-Debug\\Example_Story_Data.xml");
 }
 
 ///Destructor
@@ -77,135 +76,135 @@ ChapterTable::~ChapterTable()
     delete rootItem;
 }
 
-///A union representing the data of the table
 QVariant ChapterTable::data(const QModelIndex &index, int role) const
 {
-    //If the index is valid, return a QVariant instance
+    //qDebug() << "Data Function";
+
     if (!index.isValid())
         return QVariant();
 
-    //If the correct role is assigned, return a QVariant instance
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
-    //Create a table item
     DialogueItem *item = getItem(index);
 
-    //Return the data from the generated item object
-    return item->data(index.column());
+    return item->GetData(index.column());
 }
 
-///Use the Qt flag system to define properties of the table
 Qt::ItemFlags ChapterTable::flags(const QModelIndex &index) const
 {
+    //qDebug() << "Flags Function";
     if (!index.isValid())
         return 0;
 
     return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
 }
 
-///If the provided index is valid, return a pointer to the item associated with that index
 DialogueItem *ChapterTable::getItem(const QModelIndex &index) const
 {
+    //qDebug() << "Get Item Function";
+
+    //If the index is valid, check if its a DialogueItem. If so, return it
     if (index.isValid()) {
         DialogueItem *item = static_cast<DialogueItem*>(index.internalPointer());
         if (item)
             return item;
     }
+    //Otherwise return the rootItem
+    //else{
     return rootItem;
+    //}
+
 }
 
-///Returns the
 QVariant ChapterTable::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
+    //qDebug() << "Header Data Function";
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return rootItem->data(section);
+        return rootItem->GetData(section);
 
     return QVariant();
 }
 
-//Retrieve an object representing the slot information for the given table position
 QModelIndex ChapterTable::index(int row, int column, const QModelIndex &parent) const
 {
-    //Unsure what this does...................................
-    if (parent.isValid() && parent.column() != 0)
-        return QModelIndex();
+    qDebug() << "Index Function Called";
+    //if (parent.isValid() && parent.column() != 0)
+    //    return QModelIndex();
 
-    //Get the parent of this item
     DialogueItem *parentItem = getItem(parent);
+    DialogueItem *childItem = parentItem->GetChild(row);
 
-    //Get the child of this item
-    DialogueItem *childItem = parentItem->child(row);
-
-    //If a child
     if (childItem)
         return createIndex(row, column, childItem);
     else
         return QModelIndex();
 }
 
-///Requests that the selected item create a row either as a child, or a succeeding element
 bool ChapterTable::insertRows(int position, int rows, const QModelIndex &parent)
 {
+    //qDebug() << "InsertRows Function";
     DialogueItem *parentItem = getItem(parent);
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildRow(position, rootItem->columnCount());
+    success = parentItem->AddChildRow(position, rootItem->GetNumOfColumns());
     endInsertRows();
 
     return success;
 }
 
-//! [7]
 QModelIndex ChapterTable::parent(const QModelIndex &index) const
 {
+    //qDebug() << "Chapter Table Parent Function";
     if (!index.isValid())
         return QModelIndex();
 
     DialogueItem *childItem = getItem(index);
-    DialogueItem *parentItem = childItem->parent();
+    DialogueItem *parentItem = childItem->GetParent();
 
     if (parentItem == rootItem)
         return QModelIndex();
 
-    return createIndex(parentItem->childNumber(), 0, parentItem);
+    return createIndex(parentItem->GetChildIndex(), 0, parentItem);
 }
 
-///Returns the number of columns in the table
 int ChapterTable::columnCount(const QModelIndex & /* parent */) const
 {
-    return rootItem->columnCount();
+    //qDebug() << "Column Count Function";
+    return rootItem->GetNumOfColumns();
 }
+
 bool ChapterTable::removeRows(int position, int rows, const QModelIndex &parent)
 {
+    //qDebug() << "Remove Rows Function";
     DialogueItem *parentItem = getItem(parent);
     bool success = true;
 
     beginRemoveRows(parent, position, position + rows - 1);
-    success = parentItem->removeChildRow(position, rows);
+    success = parentItem->RemoveChildRow(position, rows);
     endRemoveRows();
 
     return success;
 }
 
-//! [8]
 int ChapterTable::rowCount(const QModelIndex &parent) const
 {
+    //qDebug() << "Rows Count Function";
     DialogueItem *parentItem = getItem(parent);
 
-    return parentItem->childCount();
+    return parentItem->GetNumOfChildren();
 }
-//! [8]
 
 bool ChapterTable::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    qDebug() << "Chapter Data Set Data Function";
     if (role != Qt::EditRole)
         return false;
 
     DialogueItem *item = getItem(index);
-    bool result = item->setData(index.column(), value);
+    bool result = item->SetData(index.column(), value);
 
     if (result)
         emit dataChanged(index, index);
@@ -216,10 +215,11 @@ bool ChapterTable::setData(const QModelIndex &index, const QVariant &value, int 
 bool ChapterTable::setHeaderData(int section, Qt::Orientation orientation,
                               const QVariant &value, int role)
 {
+    //qDebug() << "Set Header Data Function";
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
 
-    bool result = rootItem->setData(section, value);
+    bool result = rootItem->SetData(section, value);
 
     if (result)
         emit headerDataChanged(orientation, section, section);
@@ -227,12 +227,12 @@ bool ChapterTable::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
-///Configure the table data
-void ChapterTable::setupModelData(const QStringList &lines, DialogueItem *root)
+void ChapterTable::UpdateTableData(QString storyFilePath)
 {   
+    qDebug() << "Update Table Data Function";
     //Load the default xml data, and read the contents in
     QDomDocument xmlDoc;
-    QFile xmlFile("C:/Users/garre/Desktop/Scripts/GVNEditor/Example_Story_Data.xml");
+    QFile xmlFile(storyFilePath);
     xmlFile.open(QFile::ReadOnly);
     xmlDoc.setContent(xmlFile.readAll());
     xmlFile.close();
@@ -253,73 +253,14 @@ void ChapterTable::setupModelData(const QStringList &lines, DialogueItem *root)
         qDebug() << dialogue;
         qDebug() << sprite;
 
-
-
-        //parent->insertChildRow(parent->childCount(), 1, rootItem->columnCount());
-        //Set the top level details for each column
-
         //Create a row, then assign information to each column for that row
-        DialogueItem* newItem = root->insertChildRow(root->childCount(),  rootItem->columnCount());
-        newItem->setData(0, speaker);
-        newItem->setData(1, dialogue);
-        DialogueItem* settingItem = newItem->insertChildRow(0, rootItem->columnCount());
-        settingItem->setData(0, "Test: ");
-
-        //root->insertChildRow(root->childCount(), rootItem->columnCount());
-
-
-
+        DialogueItem* newItem = rootItem->AddChildRow(rootItem->GetNumOfChildren(),  rootItem->GetNumOfColumns());
+        newItem->SetData(0, speaker);
+        newItem->SetData(1, dialogue);
+        DialogueItem* settingItem = newItem->AddChildRow(0, rootItem->GetNumOfColumns());
+        settingItem->SetData(0, "Test:");
 
 
     }
 
-
-    //while (number < lines.count()) {
-
-    //for(int i = 0; i < lines.count(); i++)
-    //{
-    //    int position = 0;
-        //while (position < lines[number].length()) {
-        //    if (lines[number].at(position) != ' ')
-        //        break;
-        //    ++position;
-        //}
-
-    //    QString lineData = lines[i];
-        //.mid(position).trimmed();
-        //qDebug() << qPrintable(lineData);
-    //}
-                        /*
-        if (!lineData.isEmpty()) {
-            // Read the column data from the rest of the line.
-            QStringList columnStrings = lineData.split("\t", QString::SkipEmptyParts);
-            QVector<QVariant> columnData;
-            for (int column = 0; column < columnStrings.count(); ++column)
-                columnData << columnStrings[column];
-
-            if (position > indentations.last()) {
-                // The last child of the current parent is now the new parent
-                // unless the current parent has no children.
-
-                if (parents.last()->childCount() > 0) {
-                    parents << parents.last()->child(parents.last()->childCount()-1);
-                    indentations << position;
-                }
-            } else {
-                while (position < indentations.last() && parents.count() > 0) {
-                    parents.pop_back();
-                    indentations.pop_back();
-                }
-            }
-
-            // Append a new item to the current parent's list of children.
-            DialogueItem *parent = parents.last();
-            parent->insertChildRow(parent->childCount(), 1, rootItem->columnCount());
-            for (int column = 0; column < columnData.size(); ++column)
-                parent->child(parent->childCount() - 1)->setData(column, columnData[column]);
-        }
-
-        ++number;
-    }
-            */
 }

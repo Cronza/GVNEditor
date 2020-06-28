@@ -63,59 +63,53 @@ class ChapterTable : public QAbstractItemModel
 
 public:
     ///Constructor
-    ChapterTable(const QStringList &headers, const QString &data);
+    ChapterTable(const QStringList &headers);
 
     ///Deconstructor
     ~ChapterTable() override;
 
-    ///Held data
-    QVariant data(const QModelIndex &index, int role) const override;
 
-    ///Table header
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const override;
+    void UpdateTableData(QString storyFilePath);
 
-    ///A trackable index value
-    QModelIndex index(int row, int column,
-                      const QModelIndex &parent = QModelIndex()) const override;
 
-    ///The parent item of an item
+
+    /* INHERITED */
     QModelIndex parent(const QModelIndex &index) const override;
 
-    ///How many rows exist in the table
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    //Retrieves the data held within the given index, for the given role
+    QVariant data(const QModelIndex &index, int role) const override;
 
-    ///How many columns exist in the table
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    ///Use the Qt flag system to define the properties of the table
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-
-    ///Set the data of a particuler index
+    //Updates the data held within the given index for the given role (Edit by default)
     bool setData(const QModelIndex &index, const QVariant &value,
                  int role = Qt::EditRole) override;
 
-    ///Set the header data of the table
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role = Qt::DisplayRole) const override;
+
+    ///Returns the index of the item in the model specified by the given row, column, and parent index
+    QModelIndex index(int row, int column,
+                      const QModelIndex &parent = QModelIndex()) const override;
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+
     bool setHeaderData(int section, Qt::Orientation orientation,
                        const QVariant &value, int role = Qt::EditRole) override;
 
-    ///Insert a row into the table
     bool insertRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
 
-    ///Remove a row from the table
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
 
 private:
-    ///Initial setup function for the table data
-    void setupModelData(const QStringList &lines, DialogueItem *parent);
-
-    ///Retrieve an element from the table
     DialogueItem *getItem(const QModelIndex &index) const;
-
-    ///The root item for the table
     DialogueItem *rootItem;
+
 };
 //! [2]
 

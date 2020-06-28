@@ -62,31 +62,21 @@ MainWindow::MainWindow() : QMainWindow()
     setupUi(this);
 
     //----------------- INTERACTIVITY ---------------------
-
-    //Setup functionality for exiting the program
-    connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-
     //Setup functionality for menu bar options
-    connect(insertRowAction, &QAction::triggered, this, &MainWindow::insertRow);
-    connect(removeRowAction, &QAction::triggered, this, &MainWindow::removeRow);
+    connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+    connect(insertRowAction, &QAction::triggered, this, &MainWindow::InsertRow);
+    connect(removeRowAction, &QAction::triggered, this, &MainWindow::RemoveRow);
+    connect(loadDataAction, &QAction::triggered, this, &MainWindow::LoadStoryData);
 }
 
-void MainWindow::LoadFile(QString filePath)
+void MainWindow::CreateChapterTable()
 {
     //Create the headers for the table using the 'tr()' localization functions
     QStringList headers;
     headers << tr("Speaker"); //Needs investigating into why tr doesnt work when this isnt a static class
     headers << tr("Dialogue"); //Needs investigating into why tr doesnt work when this isnt a static class
 
-    //Read a dialogue file in
-    QFile file(filePath);
-    file.open(QIODevice::ReadOnly);
-
-    //Create the main table object, and pass in the text read in from the demo dialogue file
-    ChapterTable *table = new ChapterTable(headers, file.readAll());
-    file.close();
-
-    //Set the data model used by the view
+    ChapterTable *table = new ChapterTable(headers);
     view->setModel(table);
 
     //Resize each column based on the size of its contents
@@ -95,7 +85,7 @@ void MainWindow::LoadFile(QString filePath)
 }
 
 ///Adds a row under of the currently selected row
-void MainWindow::insertRow()
+void MainWindow::InsertRow()
 {
     //Grab references to the data model and selected item
     QModelIndex index = view->selectionModel()->currentIndex();
@@ -114,14 +104,29 @@ void MainWindow::insertRow()
 }
 
 ///Removes the User Selected Row from the table
-void MainWindow::removeRow()
+void MainWindow::RemoveRow()
 {
     //Grab the currently selected row
     QModelIndex index = view->selectionModel()->currentIndex();
 
-    //Grab a reference to the view model
+    //Grab a reference to the view model, and ask it to remove the row
     QAbstractItemModel *model = view->model();
-
-    //Ask the model to remove the row
     model->removeRow(index.row(), index.parent());
+}
+
+///Load a selected XML story file
+void MainWindow::LoadStoryData()
+{
+    //Destroy the existing table
+    table = nullptr;
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Story Data File"), QDir::currentPath(), tr("XML Files (*.xml)"));
+    if(fileName != "")
+    {
+        qDebug() << "Chosen File: ";
+        qDebug() << fileName;
+
+        //table->UpdateTableData(fileName);
+    }
+
 }

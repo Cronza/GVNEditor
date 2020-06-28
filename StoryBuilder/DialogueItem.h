@@ -54,37 +54,38 @@
 #include <QList>
 #include <QVariant>
 #include <QVector>
+#include <QDebug>
 
 class DialogueItem
 {
 public:
+    //Constructor
     DialogueItem(const QVector<QVariant> &data, DialogueItem *parent = 0);
 
     //Destructor
     ~DialogueItem();
 
-    //Define fields for child objects
-    DialogueItem *child(int number);
-    int childCount() const;
-    int columnCount() const;
+    int GetChildIndex() const;
+    int GetNumOfChildren() const;
+    int GetNumOfColumns() const;
+    QVariant GetData(int column) const;
 
-    //Define fields for held data
-    QVariant data(int column) const;
-    DialogueItem* insertChildRow(int position, int columns);
+    bool SetData(int column, const QVariant &value);
 
-    //Define fields for parent objects
-    DialogueItem *parent();
-    bool removeChildRow(int position, int count);
+    DialogueItem* AddChildRow(int position, int columns);
+    bool RemoveChildRow(int position, int count);
 
-    //Define a field for the total children count
-    int childNumber() const;
+    DialogueItem *GetChild(int number);
+    DialogueItem *GetParent();
 
-    //Define a field for setting this entry
-    bool setData(int column, const QVariant &value);
+
+
+
 
 private:
-    ///Define fields for internal data
     QList<DialogueItem*> childItems;
+
+    /////Modeled as [0][1][2], which each index being a column
     QVector<QVariant> itemData;
     DialogueItem *parentItem;
 };

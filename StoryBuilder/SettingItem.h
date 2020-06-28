@@ -63,14 +63,10 @@ public:
     //Destructor
     ~SettingItem();
 
-    //Define fields for held data
-    QVariant data(int column) const;
+    SettingItem *GetParent();
+    QVariant GetData(int column) const;
 
-    //Define a field for setting this entry
-    bool setData(int column, const QVariant &value);
-
-    //Define a field for the parent of this entry
-    SettingItem *parent();
+    bool SetData(int column, const QVariant &value);
 
     //Define the possible types that a setting entry could be
     enum settingTypes{
@@ -78,7 +74,6 @@ public:
     };
 
 private:
-    ///Define fields for internal data
     QVector<QVariant> itemData;
     SettingItem *parentItem;
 };

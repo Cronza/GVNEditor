@@ -89,7 +89,7 @@
      <x>0</x>
      <y>0</y>
      <width>573</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -106,12 +106,18 @@
     <addaction name="insertColumnAction"/>
     <addaction name="separator"/>
     <addaction name="removeRowAction"/>
-    <addaction name="removeColumnAction"/>
     <addaction name="separator"/>
-    <addaction name="insertChildAction"/>
+   </widget>
+   <widget class="QMenu" name="storyMenu">
+    <property name="title">
+     <string>Story</string>
+    </property>
+    <addaction name="createNewAction"/>
+    <addaction name="loadDataAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="actionsMenu"/>
+   <addaction name="storyMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="exitAction">
@@ -160,6 +166,16 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="loadDataAction">
+   <property name="text">
+    <string>Load Story Data</string>
+   </property>
+  </action>
+  <action name="createNewAction">
+   <property name="text">
+    <string>Create New</string>
    </property>
   </action>
  </widget>

@@ -66,29 +66,25 @@ DialogueItem::DialogueItem(const QVector<QVariant> &data, DialogueItem *parent)
 }
 
 
-///Deconstructor
+///Destructor
 DialogueItem::~DialogueItem()
 {
+    qDebug() << "Dialogue Item is getting slapped";
     qDeleteAll(childItems);
 }
 
 
-//! [2]
-DialogueItem *DialogueItem::child(int number)
+DialogueItem *DialogueItem::GetChild(int number)
 {
     return childItems.value(number);
 }
-//! [2]
 
-//! [3]
-int DialogueItem::childCount() const
+int DialogueItem::GetNumOfChildren() const
 {
     return childItems.count();
 }
-//! [3]
 
-///Returns the number of children for this item
-int DialogueItem::childNumber() const
+int DialogueItem::GetChildIndex() const
 {
     if (parentItem)
         return parentItem->childItems.indexOf(const_cast<DialogueItem*>(this));
@@ -96,14 +92,12 @@ int DialogueItem::childNumber() const
     return 0;
 }
 
-///Returns the data held by this item
-QVariant DialogueItem::data(int column) const
+QVariant DialogueItem::GetData(int column) const
 {
     return itemData.value(column);
 }
 
-///Adds a row as a child to this item
-DialogueItem* DialogueItem::insertChildRow(int position, int columns)
+DialogueItem* DialogueItem::AddChildRow(int position, int columns)
 {
     QVector<QVariant> data(columns);
     DialogueItem *item = new DialogueItem(data, this);
@@ -112,22 +106,7 @@ DialogueItem* DialogueItem::insertChildRow(int position, int columns)
     return item;
 }
 
-
-
-//Return the number of columns in this item
-int DialogueItem::columnCount() const
-{
-    return itemData.count();
-}
-
-//Returns the parent item of this item
-DialogueItem *DialogueItem::parent()
-{
-    return parentItem;
-}
-
-//Removes the first child item of this item
-bool DialogueItem::removeChildRow(int position, int count)
+bool DialogueItem::RemoveChildRow(int position, int count)
 {
     if (position < 0 || position + count > childItems.size())
         return false;
@@ -138,13 +117,24 @@ bool DialogueItem::removeChildRow(int position, int count)
     return true;
 }
 
-//! [11]
-bool DialogueItem::setData(int column, const QVariant &value)
+int DialogueItem::GetNumOfColumns() const
 {
+    return itemData.count();
+}
+
+DialogueItem *DialogueItem::GetParent()
+{
+    return parentItem;
+}
+
+
+
+bool DialogueItem::SetData(int column, const QVariant &value)
+{
+    //Is the column invalid (Below 0, or outside the index range)
     if (column < 0 || column >= itemData.size())
         return false;
 
     itemData[column] = value;
     return true;
 }
-//! [11]
