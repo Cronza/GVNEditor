@@ -65,7 +65,6 @@ SettingItem::SettingItem(const QVector<QVariant> &data, SettingItem *parent)
     itemData = data;
 }
 
-
 ///Deconstructor
 SettingItem::~SettingItem()
 {
@@ -87,6 +86,7 @@ SettingItem *SettingItem::GetParent()
 
 bool SettingItem::SetData(int column, const QVariant &value)
 {
+    //Is the column invalid (Below 0, or outside the index range)
     if (column < 0 || column >= itemData.size())
         return false;
 
