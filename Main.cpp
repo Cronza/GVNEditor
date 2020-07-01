@@ -61,9 +61,10 @@ int main(int argc, char *argv[])
 
     //Build the core window (The GUI interface) and reveal it
     MainWindow editor;
+
     //editor.LoadFile(":/default.txt");
     //Initialize the data table
-    editor.CreateChapterTable();
+    //.CreateChapterTable();
     editor.show();
 
     //Return the app's main loop event

@@ -61,16 +61,44 @@ MainWindow::MainWindow() : QMainWindow()
     //Generate the UI C++ from the .ui XML form. Build objects from each of the .ui form widgets
     setupUi(this);
 
+    QList<QString> speakersToAdd;
+    QList<QString> dialogueToAdd;
+
+    speakersToAdd.append("Gurb");
+    speakersToAdd.append("Cronza");
+    speakersToAdd.append("Hallok");
+
+    dialogueToAdd.append("There once was a man distinguished");
+    dialogueToAdd.append("One who was raised in praise");
+    dialogueToAdd.append("But me I was always the last in line");
+
     //----------------- INTERACTIVITY ---------------------
     //Setup functionality for menu bar options
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
     connect(insertRowAction, &QAction::triggered, this, &MainWindow::InsertRow);
     connect(removeRowAction, &QAction::triggered, this, &MainWindow::RemoveRow);
     connect(loadDataAction, &QAction::triggered, this, &MainWindow::LoadStoryData);
+
+    ChapterTable *table = new ChapterTable(this);
+
+    //table->populateData(speakersToAdd,dialogueToAdd);
+    table->UpdateTableData("D:\\Scripts\\GVNEditor\\Example_Story_Data.xml");
+
+    view->setModel(table);
+
+    view->horizontalHeader()->setVisible(true);
+    view->show();
+
+
+}
+MainWindow::~MainWindow()
+{
+    //delete ui;
 }
 
 void MainWindow::CreateChapterTable()
 {
+    /*
     //Create the headers for the table using the 'tr()' localization functions
     QStringList headers;
     headers << tr("Speaker"); //Needs investigating into why tr doesnt work when this isnt a static class
@@ -82,6 +110,10 @@ void MainWindow::CreateChapterTable()
     //Resize each column based on the size of its contents
     for (int column = 0; column < table->columnCount(); ++column)
         view->resizeColumnToContents(column);
+    */
+
+    ChapterTable *table = new ChapterTable(this);
+    view->setModel(table);
 }
 
 ///Adds a row under of the currently selected row

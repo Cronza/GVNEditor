@@ -65,6 +65,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 public:
     // Constructor
     MainWindow();
+    ~MainWindow();
 
     ///Creates the Table holding Dialogue Story Data
     void CreateChapterTable();

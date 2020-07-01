@@ -57,59 +57,54 @@
 
 #include "DialogueItem.h"
 
-class ChapterTable : public QAbstractItemModel
+class ChapterTable : public QAbstractTableModel
 {
     Q_OBJECT
 
+
 public:
+    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
+    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
+    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
+    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
     ///Constructor
-    ChapterTable(const QStringList &headers);
+    ChapterTable(QObject *parent = 0); //Initialize Empty
 
     ///Deconstructor
     ~ChapterTable() override;
 
+    QList<QString> columnNames{
+        "Speaker",
+        "Dialogue"
+    };
+
     void UpdateTableData(QString storyFilePath);
+    void populateData(const QList<QString> &contactName,const QList<QString> &contactPhone);
 
-    /* INHERITED */
-    QModelIndex parent(const QModelIndex &index) const override;
+    /* INHERITED Must be Implemented*/
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
 
-    ///Retrieves the data held within the given index, for the given role
     QVariant data(const QModelIndex &index, int role) const override;
-
-    ///Updates the data held within the given index for the given role (Edit by default)
-    bool setData(const QModelIndex &index, const QVariant &value,
-                 int role = Qt::EditRole) override;
-
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const override;
-
-    ///Returns the index of the item in the model specified by the given row, column, and parent index
-    QModelIndex index(int row, int column,
-                      const QModelIndex &parent = QModelIndex()) const override;
-
-    ///Given an index for an item in the table, return the number of children rows
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    ///Given an index for an item in the table, return the number of columns the item encompasses
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 
+
+
+
+    /* INHERITED Allows Editing*/
     Qt::ItemFlags flags(const QModelIndex &index) const override;
+    bool setData(const QModelIndex &index, const QVariant &newData, int role = Qt::EditRole) override;
 
-
-    bool setHeaderData(int section, Qt::Orientation orientation,
-                       const QVariant &value, int role = Qt::EditRole) override;
-
-    bool insertRows(int position, int rows,
-                    const QModelIndex &parent = QModelIndex()) override;
-
-    bool removeRows(int position, int rows,
-                    const QModelIndex &parent = QModelIndex()) override;
+    bool insertRows(int position, int rows, const QModelIndex &index = QModelIndex()) override;
+    bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex()) override;
 
 private:
-    ///Given an index for an item in the table, return a pointer to the item itself
-    DialogueItem *getItem(const QModelIndex &index) const;
-    DialogueItem *rootItem;
+    //QVector<rowDataFields> rowData;
+    QList<QString> speakerNames;
+    QList<QString> dialogueLines;
+
+    QMap<int, QList<QString>> dataFields;
 
 };
 //! [2]

@@ -55,9 +55,10 @@
 #include "ChapterTable.h"
 
 ///Constructor
-ChapterTable::ChapterTable(const QStringList &headers)
-    : QAbstractItemModel()
+ChapterTable::ChapterTable(QObject *parent)
+    : QAbstractTableModel(parent)
 {
+    /*
     qDebug() << "Chapter Table Constructor Function";
     //For each header, add it to the root data list
     QVector<QVariant> rootData;
@@ -69,13 +70,26 @@ ChapterTable::ChapterTable(const QStringList &headers)
 
     //UpdateTableData("D:\\Scripts\\build-GVNEditor-Desktop_Qt_5_12_0_MinGW_64_bit-Debug\\Example_Story_Data.xml");
     UpdateTableData("C:\\Users\\garre\\Desktop\\Scripts\\GVNEditor\\Example_Story_Data.xml");
+    */
 }
 
 ///Destructor
 ChapterTable::~ChapterTable()
 {
-    delete rootItem;
+    //delete rootItem;
 }
+
+
+// Create a method to populate the model with data:
+void ChapterTable::populateData(const QList<QString> &speakerName,const QList<QString> &dialogueLine)
+{
+    dataFields[0].clear();
+    dataFields[0] = speakerName;
+    dataFields[1].clear();
+    dataFields[1] = dialogueLine;
+    return;
+}
+
 
 Qt::ItemFlags ChapterTable::flags(const QModelIndex &index) const
 {
@@ -86,140 +100,100 @@ Qt::ItemFlags ChapterTable::flags(const QModelIndex &index) const
     return Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
-DialogueItem *ChapterTable::getItem(const QModelIndex &index) const
-{
-    //If the index is valid, check if its pointer value is valid. If so, return it
-    if (index.isValid()) {
-        DialogueItem *item = static_cast<DialogueItem*>(index.internalPointer());
-        if (item)
-            return item;
-    }
-    return rootItem;
-}
-
 QVariant ChapterTable::data(const QModelIndex &index, int role) const
 {
-    //qDebug() << "Data Function";
-
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
+    if (role != Qt::EditRole && role != Qt::DisplayRole)
         return QVariant();
 
-    DialogueItem *item = getItem(index);
-
-    return item->GetData(index.column());
+    return dataFields[index.column()][index.row()];
 }
 
-QVariant ChapterTable::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+QVariant ChapterTable::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    //qDebug() << "Header Data Function";
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return rootItem->GetData(section);
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+        return tr("%1").arg(columnNames[section]); //Tr only accepts string literals, so we need to bypass that
 
+    }
     return QVariant();
 }
 
-QModelIndex ChapterTable::index(int row, int column, const QModelIndex &parent) const
+int ChapterTable::columnCount(const QModelIndex &parent) const
 {
-    DialogueItem *parentItem = getItem(parent);
-    DialogueItem *childItem = parentItem->GetChild(row);
-
-    if (childItem)
-        return createIndex(row, column, childItem);
-    else
-        return QModelIndex();
-}
-
-QModelIndex ChapterTable::parent(const QModelIndex &index) const
-{
-    //If theres no parent, then this is the root
-    if (!index.isValid())
-        return QModelIndex();
-
-    DialogueItem *childItem = getItem(index);
-    DialogueItem *parentItem = childItem->GetParent();
-
-    //Top-level items are not allowed to return a parent index, so return an empty one instead
-    if (parentItem == rootItem)
-        return QModelIndex();
-
-    //Create an index for the parent object, then return it
-    return createIndex(parentItem->GetChildIndex(), 0, parentItem);
-}
-
-int ChapterTable::columnCount(const QModelIndex & /* parent */) const
-{
-    return rootItem->GetNumOfColumns();
+    Q_UNUSED(parent);
+    return dataFields.size();
 }
 
 int ChapterTable::rowCount(const QModelIndex &parent) const
 {
-    DialogueItem *parentItem = getItem(parent);
+    Q_UNUSED(parent);
+    return dataFields[0].length(); //Use index 0 as an example. Any row would work
 
-    return parentItem->GetNumOfChildren();
 }
 
-bool ChapterTable::insertRows(int position, int rows, const QModelIndex &parent)
+bool ChapterTable::insertRows(int position, int rows, const QModelIndex &index)
 {
-    //qDebug() << "InsertRows Function";
-    DialogueItem *parentItem = getItem(parent);
-    bool success;
+    return false;
+    /*
+    Q_UNUSED(index);
+    beginInsertRows(QModelIndex(), position, position + rows - 1);
 
-    beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->AddChildRow(position, rootItem->GetNumOfColumns());
+    for (int row = 0; row < rows; ++row)
+        rowData.insert(position, { QString(), QString() });
+
     endInsertRows();
+    return true;
+    */
 
-    return success;
+    //qDebug() << "InsertRows Function";
+    //DialogueItem *parentItem = getItem(parent);
+    //bool success;
+
+    //beginInsertRows(parent, position, position + rows - 1);
+    //success = parentItem->AddChildRow(position, rootItem->GetNumOfColumns());
+    //endInsertRows();
+
+    //return success;
 }
 
-bool ChapterTable::removeRows(int position, int rows, const QModelIndex &parent)
+bool ChapterTable::removeRows(int position, int rows, const QModelIndex &index)
 {
-    //qDebug() << "Remove Rows Function";
-    DialogueItem *parentItem = getItem(parent);
-    bool success = true;
+    return false;
+    /*
+    Q_UNUSED(index);
+    beginRemoveRows(QModelIndex(), position, position + rows - 1);
 
-    beginRemoveRows(parent, position, position + rows - 1);
-    success = parentItem->RemoveChildRow(position, rows);
+    for (int row = 0; row < rows; ++row)
+        rowData.removeAt(position);
+
     endRemoveRows();
+    return true;
+    */
+    //qDebug() << "Remove Rows Function";
+    //DialogueItem *parentItem = getItem(parent);
+    //bool success = true;
 
-    return success;
+    //beginRemoveRows(parent, position, position + rows - 1);
+    //success = parentItem->RemoveChildRow(position, rows);
+    //endRemoveRows();
+
+    //return success;
 }
 
-bool ChapterTable::setData(const QModelIndex &index, const QVariant &value, int role)
+bool ChapterTable::setData(const QModelIndex &index, const QVariant &newData, int role)
 {
-    qDebug() << "Chapter Data Set Data Function";
-    if (role != Qt::EditRole)
+    if(!index.isValid() || role != Qt::EditRole)
         return false;
 
-    DialogueItem *item = getItem(index);
-    bool result = item->SetData(index.column(), value);
-
-    if (result)
-        emit dataChanged(index, index);
-
-    return result;
-}
-
-bool ChapterTable::setHeaderData(int section, Qt::Orientation orientation,
-                              const QVariant &value, int role)
-{
-    //qDebug() << "Set Header Data Function";
-    if (role != Qt::EditRole || orientation != Qt::Horizontal)
-        return false;
-
-    bool result = rootItem->SetData(section, value);
-
-    if (result)
-        emit headerDataChanged(orientation, section, section);
-
-    return result;
+    dataFields[index.column()][index.row()] = newData.toString();
+    return true;
 }
 
 void ChapterTable::UpdateTableData(QString storyFilePath)
 {   
+
     qDebug() << "Update Table Data Function";
     //Load the default xml data, and read the contents in
     QDomDocument xmlDoc;
@@ -237,6 +211,7 @@ void ChapterTable::UpdateTableData(QString storyFilePath)
     {
         //Get each dialogue node, then grab each setting, then grab the text element of that setting
         QDomNodeList dialogueDetails = dialogueLines.item(i).childNodes();
+
         QString speaker = dialogueDetails.item(0).firstChild().nodeValue();
         QString dialogue = dialogueDetails.item(1).firstChild().nodeValue();
         QString sprite = dialogueDetails.item(2).firstChild().nodeValue();
@@ -245,18 +220,20 @@ void ChapterTable::UpdateTableData(QString storyFilePath)
         qDebug() << sprite;
 
         //Create a row, then assign information to each column for that row
-        DialogueItem* newItem = rootItem->AddChildRow(rootItem->GetNumOfChildren(),  rootItem->GetNumOfColumns());
-        newItem->SetData(0, speaker);
-        newItem->SetData(1, dialogue);
+        //DialogueItem* newItem = rootItem->AddChildRow(rootItem->GetNumOfChildren(),  rootItem->GetNumOfColumns());
+        //newItem->SetData(0, speaker);
+        //newItem->SetData(1, dialogue);
+        dataFields[0].append(speaker);
+        dataFields[1].append(dialogue);
 
+        /*
         DialogueItem* settingItem = newItem->AddChildRow(0, rootItem->GetNumOfColumns());
         settingItem->SetData(0, "Sprite:");
         settingItem->SetData(1, sprite);
         settingItem = newItem->AddChildRow(1, rootItem->GetNumOfColumns());
         settingItem->SetData(0, "Position:");
         settingItem->SetData(1, "None");
-
+        */
 
     }
-
 }
