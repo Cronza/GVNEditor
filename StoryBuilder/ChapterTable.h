@@ -55,58 +55,51 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include "DialogueItem.h"
-
 class ChapterTable : public QAbstractTableModel
 {
     Q_OBJECT
 
 
 public:
-    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
-    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
-    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
-    //https://riptutorial.com/qt/example/13705/a-simple-read-only-table-to-view-data-from-a-model
     ///Constructor
     ChapterTable(QObject *parent = 0); //Initialize Empty
 
     ///Deconstructor
     ~ChapterTable() override;
 
-    QList<QString> columnNames{
-        "Speaker",
-        "Dialogue"
-    };
-
-    void UpdateTableData(QString storyFilePath);
-    void populateData(const QList<QString> &contactName,const QList<QString> &contactPhone);
-
-    /* INHERITED Must be Implemented*/
+    /* ----- INHERITED ----- */
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
 
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-
-
-
-
-    /* INHERITED Allows Editing*/
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     bool setData(const QModelIndex &index, const QVariant &newData, int role = Qt::EditRole) override;
 
-    bool insertRows(int position, int rows, const QModelIndex &index = QModelIndex()) override;
-    bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex()) override;
+    /* ----- CUSTOM ----- */
+    QList<QString> columnNames{
+        "Speaker",
+        "Dialogue"
+    };
+    void UpdateTableData(QString storyFilePath);
+
+    ///Builds the table data multidimensional list, and loads default values
+    void InitializeTableData();
+
+    void AddRow(QModelIndex &index);
+    void RemoveRow(QModelIndex &index);
+    void MoveRowUp(QModelIndex &sourceIndex);
+    void MoveRowDown(QModelIndex &sourceIndex);
+
+    QList<QList<QString>> dataFields;
 
 private:
-    //QVector<rowDataFields> rowData;
-    QList<QString> speakerNames;
-    QList<QString> dialogueLines;
 
-    QMap<int, QList<QString>> dataFields;
+
+
+
 
 };
-//! [2]
 
 #endif // ChapterTable_H

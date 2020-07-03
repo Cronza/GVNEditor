@@ -75,8 +75,10 @@ public:
 
 private slots:
     //Define interactive elements
-    void RemoveRow();
-    void InsertRow();
+    void AddChapterTableRow();
+    void RemoveChapterTableRow();
+    void MoveChapterTableRowUp();
+    void MoveChapterTableRowDown();
     void LoadStoryData();
 
 };

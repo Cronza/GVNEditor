@@ -51,48 +51,24 @@
 #include <QtWidgets>
 #include <QtXml>
 #include <QFile>
-#include "DialogueItem.h"
 #include "ChapterTable.h"
 
 ///Constructor
 ChapterTable::ChapterTable(QObject *parent)
     : QAbstractTableModel(parent)
 {
-    /*
-    qDebug() << "Chapter Table Constructor Function";
-    //For each header, add it to the root data list
-    QVector<QVariant> rootData;
-    foreach (QString header, headers)
-        rootData << header;
 
-    //Create the "header "bar" of the table
-    rootItem = new DialogueItem(rootData);
-
-    //UpdateTableData("D:\\Scripts\\build-GVNEditor-Desktop_Qt_5_12_0_MinGW_64_bit-Debug\\Example_Story_Data.xml");
-    UpdateTableData("C:\\Users\\garre\\Desktop\\Scripts\\GVNEditor\\Example_Story_Data.xml");
-    */
 }
-
-///Destructor
 ChapterTable::~ChapterTable()
 {
-    //delete rootItem;
+
 }
 
-
-// Create a method to populate the model with data:
-void ChapterTable::populateData(const QList<QString> &speakerName,const QList<QString> &dialogueLine)
-{
-    dataFields[0].clear();
-    dataFields[0] = speakerName;
-    dataFields[1].clear();
-    dataFields[1] = dialogueLine;
-    return;
-}
-
-
+/* ----- INHERITED FUNCTIONS ----- */
 Qt::ItemFlags ChapterTable::flags(const QModelIndex &index) const
 {
+    Q_UNUSED(index);
+
     /*
     We don't care about the specifics of any given item,
     so by default they're always editable, and selectable
@@ -123,7 +99,7 @@ QVariant ChapterTable::headerData(int section, Qt::Orientation orientation, int 
 int ChapterTable::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return dataFields.size();
+    return dataFields.length();
 }
 
 int ChapterTable::rowCount(const QModelIndex &parent) const
@@ -133,62 +109,67 @@ int ChapterTable::rowCount(const QModelIndex &parent) const
 
 }
 
-bool ChapterTable::insertRows(int position, int rows, const QModelIndex &index)
-{
-    return false;
-    /*
-    Q_UNUSED(index);
-    beginInsertRows(QModelIndex(), position, position + rows - 1);
-
-    for (int row = 0; row < rows; ++row)
-        rowData.insert(position, { QString(), QString() });
-
-    endInsertRows();
-    return true;
-    */
-
-    //qDebug() << "InsertRows Function";
-    //DialogueItem *parentItem = getItem(parent);
-    //bool success;
-
-    //beginInsertRows(parent, position, position + rows - 1);
-    //success = parentItem->AddChildRow(position, rootItem->GetNumOfColumns());
-    //endInsertRows();
-
-    //return success;
-}
-
-bool ChapterTable::removeRows(int position, int rows, const QModelIndex &index)
-{
-    return false;
-    /*
-    Q_UNUSED(index);
-    beginRemoveRows(QModelIndex(), position, position + rows - 1);
-
-    for (int row = 0; row < rows; ++row)
-        rowData.removeAt(position);
-
-    endRemoveRows();
-    return true;
-    */
-    //qDebug() << "Remove Rows Function";
-    //DialogueItem *parentItem = getItem(parent);
-    //bool success = true;
-
-    //beginRemoveRows(parent, position, position + rows - 1);
-    //success = parentItem->RemoveChildRow(position, rows);
-    //endRemoveRows();
-
-    //return success;
-}
-
+/* ----- CUSTOM FUNCTIONS ----- */
 bool ChapterTable::setData(const QModelIndex &index, const QVariant &newData, int role)
 {
     if(!index.isValid() || role != Qt::EditRole)
         return false;
 
+    qDebug() << dataFields;
     dataFields[index.column()][index.row()] = newData.toString();
     return true;
+}
+void ChapterTable::InitializeTableData()
+{
+    //TEMP HACKS
+    dataFields.append(QList<QString>());
+    dataFields.append(QList<QString>());
+
+    UpdateTableData("D:\\Scripts\\GVNEditor\\Example_Story_Data.xml");
+}
+
+void ChapterTable::AddRow(QModelIndex &index)
+{
+    int row = index.row();
+
+    //Inform the model to update view changes
+    beginInsertRows(QModelIndex(), row, row);
+
+    for(int i = 0; i < dataFields.length(); i++){
+        dataFields[i].insert(row, "");
+    }
+
+    //Inform the view that we're done
+    endInsertRows();
+}
+
+void ChapterTable::RemoveRow(QModelIndex &index)
+{
+    int row = index.row();
+
+    //Inform the model to update view changes
+    beginRemoveRows(QModelIndex(), row, row);
+
+    for(int i = 0; i < dataFields.length(); i++){
+        dataFields[i].removeAt(row);
+    }
+
+    //Inform the view that we're done
+    endRemoveRows();
+
+}
+
+void ChapterTable::MoveRowUp(QModelIndex &sourceIndex)
+{
+    //Swap data with the row above this entry
+    qDebug() << "Moving Row Up";
+    QList<QString> temp = dataFields[sourceIndex.row()];
+    qDebug() << temp;
+}
+
+void ChapterTable::MoveRowDown(QModelIndex &sourceIndex)
+{
+
 }
 
 void ChapterTable::UpdateTableData(QString storyFilePath)

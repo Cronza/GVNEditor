@@ -9,15 +9,14 @@ HEADERS     = \
     MainWindow.h \
     MainWindow.h \
     StoryBuilder/ChapterTable.h \
-    StoryBuilder/DialogueItem.h \
     StoryBuilder/SettingItem.h
 RESOURCES   = \
-    GVNEditor.qrc
+    GVNEditor.qrc \
+    Resources/Icons/icons.qrc
 SOURCES     = \
     StoryBuilder/ChapterTable.cpp \
     MainWindow.cpp \
     Main.cpp \
-    StoryBuilder/DialogueItem.cpp \
     StoryBuilder/SettingItem.cpp
 
 # install

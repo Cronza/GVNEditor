@@ -75,19 +75,24 @@ MainWindow::MainWindow() : QMainWindow()
     //----------------- INTERACTIVITY ---------------------
     //Setup functionality for menu bar options
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-    connect(insertRowAction, &QAction::triggered, this, &MainWindow::InsertRow);
-    connect(removeRowAction, &QAction::triggered, this, &MainWindow::RemoveRow);
+    connect(insertRowAction, &QAction::triggered, this, &MainWindow::AddChapterTableRow);
+    connect(removeRowAction, &QAction::triggered, this, &MainWindow::RemoveChapterTableRow);
     connect(loadDataAction, &QAction::triggered, this, &MainWindow::LoadStoryData);
 
-    ChapterTable *table = new ChapterTable(this);
+    connect(addEntryButton, SIGNAL (clicked()), this, SLOT(AddChapterTableRow()));
+    connect(removeEntryButton, SIGNAL (clicked()), this, SLOT(RemoveChapterTableRow()));
+    connect(moveEntryUpButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowUp()));
+    connect(moveEntryDownButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowDown()));
 
-    //table->populateData(speakersToAdd,dialogueToAdd);
-    table->UpdateTableData("D:\\Scripts\\GVNEditor\\Example_Story_Data.xml");
+    table = new ChapterTable(this);
 
-    view->setModel(table);
+    //Initialize the table with some data
+    table->InitializeTableData();
 
-    view->horizontalHeader()->setVisible(true);
-    view->show();
+    chapterTableView->setModel(table);
+
+    chapterTableView->horizontalHeader()->setVisible(true);
+    chapterTableView->show();
 
 
 }
@@ -112,38 +117,33 @@ void MainWindow::CreateChapterTable()
         view->resizeColumnToContents(column);
     */
 
-    ChapterTable *table = new ChapterTable(this);
-    view->setModel(table);
+    //ChapterTable *table = new ChapterTable(this);
+    //chapterTableView->setModel(table);
 }
 
-///Adds a row under of the currently selected row
-void MainWindow::InsertRow()
+void MainWindow::AddChapterTableRow()
 {
-    //Grab references to the data model and selected item
-    QModelIndex index = view->selectionModel()->currentIndex();
-    QAbstractItemModel *model = view->model();
-
-    //Create the row, and check whether it was successfully created
-    if (!model->insertRow(index.row()+1, index.parent()))
-        return;
-
-    //Loop through each column,
-    for (int column = 0; column < model->columnCount(index.parent()); ++column) {
-        QModelIndex child = model->index(index.row()+1, column, index.parent());
-        model->setData(child, QVariant("[No data]"), Qt::EditRole);
-    }
+    QModelIndex index = chapterTableView->selectionModel()->currentIndex();
+    table->AddRow(index);
 
 }
 
-///Removes the User Selected Row from the table
-void MainWindow::RemoveRow()
+void MainWindow::RemoveChapterTableRow()
 {
-    //Grab the currently selected row
-    QModelIndex index = view->selectionModel()->currentIndex();
+    QModelIndex index = chapterTableView->selectionModel()->currentIndex();
+    table->RemoveRow(index);
+}
 
-    //Grab a reference to the view model, and ask it to remove the row
-    QAbstractItemModel *model = view->model();
-    model->removeRow(index.row(), index.parent());
+void MainWindow::MoveChapterTableRowUp()
+{
+    QModelIndex index = chapterTableView->selectionModel()->currentIndex();
+    table->MoveRowUp(index);
+}
+
+void MainWindow::MoveChapterTableRowDown()
+{
+    QModelIndex index = chapterTableView->selectionModel()->currentIndex();
+    table->MoveRowDown(index);
 }
 
 ///Load a selected XML story file
