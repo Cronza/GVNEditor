@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent>
+  <Asset Type="GVNXMLData.StoryChapter">
+    <ChapterName>Intro</ChapterName>
+    <ChapterText>
+      <Item>
+        <Item>Garrett</Item>
+        <Item>Hello and Welcome to the GVNEditor</Item>
+        <Item></Item>
+      </Item>
+      <Item>
+        <Item>Garrett</Item>
+        <Item>This is a free, open-source tool to allow you to build visual novels</Item>
+        <Item></Item>
+      </Item>
+      <Item>
+        <Item>Garrett</Item>
+        <Item>Please Enjoy</Item>
+        <Item></Item>
+      </Item>
+    </ChapterText>
+  </Asset>
+</XnaContent>

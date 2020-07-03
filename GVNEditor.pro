@@ -11,8 +11,8 @@ HEADERS     = \
     StoryBuilder/ChapterTable.h \
     StoryBuilder/SettingItem.h
 RESOURCES   = \
-    GVNEditor.qrc \
-    Resources/Icons/icons.qrc
+    Resources/Icons/icons.qrc \
+    Resources/Examples/examples.qrc
 SOURCES     = \
     StoryBuilder/ChapterTable.cpp \
     MainWindow.cpp \

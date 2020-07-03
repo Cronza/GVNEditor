@@ -84,14 +84,16 @@ QVariant ChapterTable::data(const QModelIndex &index, int role) const
     if (role != Qt::EditRole && role != Qt::DisplayRole)
         return QVariant();
 
-    return dataFields[index.column()][index.row()];
+    return tableData[index.column()][index.row()];
 }
 
 QVariant ChapterTable::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         return tr("%1").arg(columnNames[section]); //Tr only accepts string literals, so we need to bypass that
-
+    }
+    if (role == Qt::DisplayRole && orientation == Qt::Vertical) {
+        return tr("%1").arg(section);
     }
     return QVariant();
 }
@@ -99,33 +101,39 @@ QVariant ChapterTable::headerData(int section, Qt::Orientation orientation, int 
 int ChapterTable::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return dataFields.length();
+    return tableData.length();
 }
 
 int ChapterTable::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return dataFields[0].length(); //Use index 0 as an example. Any row would work
+    return tableData[0].length(); //Use index 0 as an example. Any row would work
 
 }
 
-/* ----- CUSTOM FUNCTIONS ----- */
 bool ChapterTable::setData(const QModelIndex &index, const QVariant &newData, int role)
 {
     if(!index.isValid() || role != Qt::EditRole)
         return false;
 
-    qDebug() << dataFields;
-    dataFields[index.column()][index.row()] = newData.toString();
+    tableData[index.column()][index.row()] = newData.toString();
+
+    emit dataChanged(index, index);
     return true;
 }
-void ChapterTable::InitializeTableData()
-{
-    //TEMP HACKS
-    dataFields.append(QList<QString>());
-    dataFields.append(QList<QString>());
 
-    UpdateTableData("D:\\Scripts\\GVNEditor\\Example_Story_Data.xml");
+/* ----- CUSTOM FUNCTIONS ----- */
+
+void ChapterTable::InitializeTableData(QFile &file)
+{
+    //Initialize a list for each column in the table
+    for(int i = 0; i < columnNames.length(); i++)
+    {
+        tableData.append(QList<QVariant>());
+    }
+
+    //Load some default text
+    LoadTableData(file);
 }
 
 void ChapterTable::AddRow(QModelIndex &index)
@@ -135,8 +143,8 @@ void ChapterTable::AddRow(QModelIndex &index)
     //Inform the model to update view changes
     beginInsertRows(QModelIndex(), row, row);
 
-    for(int i = 0; i < dataFields.length(); i++){
-        dataFields[i].insert(row, "");
+    for(int i = 0; i < tableData.length(); i++){
+        tableData[i].insert(row, "");
     }
 
     //Inform the view that we're done
@@ -150,8 +158,8 @@ void ChapterTable::RemoveRow(QModelIndex &index)
     //Inform the model to update view changes
     beginRemoveRows(QModelIndex(), row, row);
 
-    for(int i = 0; i < dataFields.length(); i++){
-        dataFields[i].removeAt(row);
+    for(int i = 0; i < tableData.length(); i++){
+        tableData[i].removeAt(row);
     }
 
     //Inform the view that we're done
@@ -159,26 +167,45 @@ void ChapterTable::RemoveRow(QModelIndex &index)
 
 }
 
-void ChapterTable::MoveRowUp(QModelIndex &sourceIndex)
+void ChapterTable::SwapRowData(QModelIndex &sourceIndex, QModelIndex &targetIndex)
 {
     //Swap data with the row above this entry
-    qDebug() << "Moving Row Up";
-    QList<QString> temp = dataFields[sourceIndex.row()];
-    qDebug() << temp;
+    QList<QVariant> temp;
+    int sourceRow = sourceIndex.row();
+    int targetRow = targetIndex.row();
+
+    //Cache the source index data
+    for(int i = 0; i < tableData.length(); i++){
+        temp.append(tableData[i][sourceRow]);
+    }
+
+    //Copy the target index data to the source index
+    for(int i = 0; i < tableData.length(); i++){
+        tableData[i][sourceRow] = tableData[i][targetRow];
+    }
+
+    //Update the target index data with the cached source index data
+    for(int i = 0; i < tableData.length(); i++){
+        tableData[i][targetRow] = temp[i];
+    }
+
+    emit dataChanged(sourceIndex, targetIndex);
 }
 
-void ChapterTable::MoveRowDown(QModelIndex &sourceIndex)
-{
-
-}
-
-void ChapterTable::UpdateTableData(QString storyFilePath)
+void ChapterTable::LoadTableData(QFile &storyFile)
 {   
+    //Halt table reading so we can clear data
+    beginResetModel();
 
-    qDebug() << "Update Table Data Function";
+    //Clear our table data in case there's existing table data
+    for(int i = 0; i < tableData.length(); i++){
+        tableData[i].clear();
+    }
+
+
     //Load the default xml data, and read the contents in
     QDomDocument xmlDoc;
-    QFile xmlFile(storyFilePath);
+    QFile &xmlFile = storyFile;
     xmlFile.open(QFile::ReadOnly);
     xmlDoc.setContent(xmlFile.readAll());
     xmlFile.close();
@@ -204,8 +231,8 @@ void ChapterTable::UpdateTableData(QString storyFilePath)
         //DialogueItem* newItem = rootItem->AddChildRow(rootItem->GetNumOfChildren(),  rootItem->GetNumOfColumns());
         //newItem->SetData(0, speaker);
         //newItem->SetData(1, dialogue);
-        dataFields[0].append(speaker);
-        dataFields[1].append(dialogue);
+        tableData[0].append(speaker);
+        tableData[1].append(dialogue);
 
         /*
         DialogueItem* settingItem = newItem->AddChildRow(0, rootItem->GetNumOfColumns());
@@ -217,4 +244,6 @@ void ChapterTable::UpdateTableData(QString storyFilePath)
         */
 
     }
+
+    endResetModel();
 }

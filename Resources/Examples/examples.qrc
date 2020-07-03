@@ -1,0 +1,5 @@
+<RCC>
+    <qresource lang="xml" prefix="/examples">
+        <file>Example_Story_Data.xml</file>
+    </qresource>
+</RCC>

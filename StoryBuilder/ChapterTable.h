@@ -54,6 +54,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include <QFile>
 
 class ChapterTable : public QAbstractTableModel
 {
@@ -82,17 +83,17 @@ public:
         "Speaker",
         "Dialogue"
     };
-    void UpdateTableData(QString storyFilePath);
+
+    void LoadTableData(QFile &storyFile);
 
     ///Builds the table data multidimensional list, and loads default values
-    void InitializeTableData();
+    void InitializeTableData(QFile &file);
 
     void AddRow(QModelIndex &index);
     void RemoveRow(QModelIndex &index);
-    void MoveRowUp(QModelIndex &sourceIndex);
-    void MoveRowDown(QModelIndex &sourceIndex);
+    void SwapRowData(QModelIndex &sourceIndex, QModelIndex &targetIndex);
 
-    QList<QList<QString>> dataFields;
+    QList<QList<QVariant>> tableData;
 
 private:
 

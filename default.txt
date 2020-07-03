@@ -1,8 +1,0 @@
-Garrett				Oh hi Stella! How have you been?
-    Sprite			//item/path
-    Position			0,0,0
-
-Stella				Im doing well! It's great to see you
-    Sprite			//item/path
-    Position			0,0,0
-

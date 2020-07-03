@@ -61,39 +61,18 @@ MainWindow::MainWindow() : QMainWindow()
     //Generate the UI C++ from the .ui XML form. Build objects from each of the .ui form widgets
     setupUi(this);
 
-    QList<QString> speakersToAdd;
-    QList<QString> dialogueToAdd;
-
-    speakersToAdd.append("Gurb");
-    speakersToAdd.append("Cronza");
-    speakersToAdd.append("Hallok");
-
-    dialogueToAdd.append("There once was a man distinguished");
-    dialogueToAdd.append("One who was raised in praise");
-    dialogueToAdd.append("But me I was always the last in line");
-
     //----------------- INTERACTIVITY ---------------------
     //Setup functionality for menu bar options
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-    connect(insertRowAction, &QAction::triggered, this, &MainWindow::AddChapterTableRow);
-    connect(removeRowAction, &QAction::triggered, this, &MainWindow::RemoveChapterTableRow);
-    connect(loadDataAction, &QAction::triggered, this, &MainWindow::LoadStoryData);
+    connect(loadStoryFileAction, &QAction::triggered, this, &MainWindow::LoadStoryData);
 
     connect(addEntryButton, SIGNAL (clicked()), this, SLOT(AddChapterTableRow()));
     connect(removeEntryButton, SIGNAL (clicked()), this, SLOT(RemoveChapterTableRow()));
     connect(moveEntryUpButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowUp()));
     connect(moveEntryDownButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowDown()));
 
-    table = new ChapterTable(this);
-
-    //Initialize the table with some data
-    table->InitializeTableData();
-
-    chapterTableView->setModel(table);
-
-    chapterTableView->horizontalHeader()->setVisible(true);
-    chapterTableView->show();
-
+    //Spawn the chapter table editor
+    CreateChapterTable();
 
 }
 MainWindow::~MainWindow()
@@ -103,22 +82,21 @@ MainWindow::~MainWindow()
 
 void MainWindow::CreateChapterTable()
 {
-    /*
-    //Create the headers for the table using the 'tr()' localization functions
-    QStringList headers;
-    headers << tr("Speaker"); //Needs investigating into why tr doesnt work when this isnt a static class
-    headers << tr("Dialogue"); //Needs investigating into why tr doesnt work when this isnt a static class
+    table = new ChapterTable(this);
 
-    ChapterTable *table = new ChapterTable(headers);
-    view->setModel(table);
+    //Initialize the table with some data
+    QFile exampleFile(":/examples/Example_Story_Data.xml");
+    table->InitializeTableData(exampleFile);
 
-    //Resize each column based on the size of its contents
-    for (int column = 0; column < table->columnCount(); ++column)
-        view->resizeColumnToContents(column);
-    */
+    chapterTableView->setModel(table);
 
-    //ChapterTable *table = new ChapterTable(this);
-    //chapterTableView->setModel(table);
+    //Resize the dialogue column for maximum room
+    chapterTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    chapterTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    chapterTableView->setWordWrap(true);
+    chapterTableView->horizontalHeader()->setVisible(true);
+    chapterTableView->verticalHeader()->setVisible(true);
+    chapterTableView->show();
 }
 
 void MainWindow::AddChapterTableRow()
@@ -136,29 +114,44 @@ void MainWindow::RemoveChapterTableRow()
 
 void MainWindow::MoveChapterTableRowUp()
 {
-    QModelIndex index = chapterTableView->selectionModel()->currentIndex();
-    table->MoveRowUp(index);
+    QModelIndex sourceIndex = chapterTableView->selectionModel()->currentIndex();
+
+    //Only move up if we have room
+    if(!sourceIndex.row() - 1 < 0)
+    {
+        QModelIndex targetIndex = chapterTableView->model()->index(sourceIndex.row() - 1, sourceIndex.column()); //Previous index
+        table->SwapRowData(sourceIndex, targetIndex);
+        chapterTableView->selectionModel()->setCurrentIndex(targetIndex, QItemSelectionModel::SelectCurrent);
+    }
 }
 
 void MainWindow::MoveChapterTableRowDown()
 {
-    QModelIndex index = chapterTableView->selectionModel()->currentIndex();
-    table->MoveRowDown(index);
+    int numofEntries = table->rowCount(QModelIndex());
+    QModelIndex sourceIndex = chapterTableView->selectionModel()->currentIndex();
+
+    //Only move down if we have room
+    if(sourceIndex.row() + 1 < numofEntries)
+    {
+        QModelIndex targetIndex = chapterTableView->model()->index(sourceIndex.row() + 1, sourceIndex.column()); //Previous index
+        table->SwapRowData(sourceIndex, targetIndex);
+        chapterTableView->selectionModel()->setCurrentIndex(targetIndex, QItemSelectionModel::SelectCurrent);
+    }
 }
 
 ///Load a selected XML story file
 void MainWindow::LoadStoryData()
 {
-    //Destroy the existing table
-    table = nullptr;
-
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Story Data File"), QDir::currentPath(), tr("XML Files (*.xml)"));
-    if(fileName != "")
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open Story Data File"), QDir::currentPath(), tr("XML Files (*.xml)"));
+    if(filePath != "")
     {
         qDebug() << "Chosen File: ";
-        qDebug() << fileName;
+        qDebug() << filePath;
+        QFile newFile(filePath);
+        table->LoadTableData(newFile);
 
-        //table->UpdateTableData(fileName);
+        emit table->dataChanged(QModelIndex(), QModelIndex());
+
     }
 
 }

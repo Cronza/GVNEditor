@@ -54,7 +54,8 @@
 
 int main(int argc, char *argv[])
 {
-    Q_INIT_RESOURCE(GVNEditor);
+    Q_INIT_RESOURCE(examples);
+    Q_INIT_RESOURCE(icons);
 
     //Build the core application object (Handles the underlying control logic)
     QApplication app(argc, argv);
