@@ -80,6 +80,7 @@ private slots:
     void MoveChapterTableRowUp();
     void MoveChapterTableRowDown();
     void LoadStoryData();
+    void SaveStoryDataAs();
 
 };
 

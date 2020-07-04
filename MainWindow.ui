@@ -239,7 +239,7 @@
     <addaction name="exitAction"/>
     <addaction name="loadStoryFileAction"/>
     <addaction name="createStoryFileAction"/>
-    <addaction name="saveStoryFileAction"/>
+    <addaction name="saveStoryFileAsAction"/>
    </widget>
    <widget class="QMenu" name="storyMenu">
     <property name="title">
@@ -295,9 +295,9 @@
     <string>New Story File</string>
    </property>
   </action>
-  <action name="saveStoryFileAction">
+  <action name="saveStoryFileAsAction">
    <property name="text">
-    <string>Save Story File</string>
+    <string>Save Story File As...</string>
    </property>
   </action>
  </widget>

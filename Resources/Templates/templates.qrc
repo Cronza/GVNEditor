@@ -1,0 +1,5 @@
+<RCC>
+    <qresource lang="xml" prefix="/templates">
+        <file>Story_Data_Template.xml</file>
+    </qresource>
+</RCC>

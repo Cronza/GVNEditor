@@ -202,7 +202,6 @@ void ChapterTable::LoadTableData(QFile &storyFile)
         tableData[i].clear();
     }
 
-
     //Load the default xml data, and read the contents in
     QDomDocument xmlDoc;
     QFile &xmlFile = storyFile;
@@ -245,5 +244,48 @@ void ChapterTable::LoadTableData(QFile &storyFile)
 
     }
 
+    //Rebuild the table
     endResetModel();
 }
+
+void ChapterTable::SaveStoryData(QFile &saveFile)
+{
+    /*
+        We'll be using an empty template file to save out our table information, as the
+        XML schema for the engine is in C#, and rebuilding it here would cause
+        duplication issues
+    */
+
+    QDomDocument xmlDoc;
+    QFile templateXMLFile(":/templates/Story_Data_Template.xml");
+
+    templateXMLFile.open(QFile::ReadOnly);
+    xmlDoc.setContent(templateXMLFile.readAll());
+    templateXMLFile.close();
+
+    QDomNode entriesContainer = xmlDoc.elementsByTagName("ChapterText").item(0);
+
+    for(int x = 0; x < rowCount(QModelIndex()); x++)
+    {
+        QDomNode entry = xmlDoc.createElement("Item");
+
+        for(int y = 0; y < columnCount(QModelIndex()); y++)
+        {
+            QDomNode entryDetail = xmlDoc.createElement("Item");
+            QDomNode entryDetailText = xmlDoc.createTextNode(tableData[y][x].toString());
+            entryDetail.appendChild(entryDetailText);
+            entry.appendChild(entryDetail);
+        }
+
+        entriesContainer.appendChild(entry);
+    }
+
+    saveFile.open(QFile::ReadWrite);
+
+
+    //Use a text stream object to bypass char* param requirement
+    QTextStream stream(&saveFile);
+    stream << xmlDoc.toString();
+    saveFile.close();
+}
+

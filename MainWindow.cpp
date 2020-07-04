@@ -65,6 +65,7 @@ MainWindow::MainWindow() : QMainWindow()
     //Setup functionality for menu bar options
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
     connect(loadStoryFileAction, &QAction::triggered, this, &MainWindow::LoadStoryData);
+    connect(saveStoryFileAsAction, &QAction::triggered, this, &MainWindow::SaveStoryDataAs);
 
     connect(addEntryButton, SIGNAL (clicked()), this, SLOT(AddChapterTableRow()));
     connect(removeEntryButton, SIGNAL (clicked()), this, SLOT(RemoveChapterTableRow()));
@@ -151,7 +152,18 @@ void MainWindow::LoadStoryData()
         table->LoadTableData(newFile);
 
         emit table->dataChanged(QModelIndex(), QModelIndex());
-
     }
 
+}
+
+void MainWindow::SaveStoryDataAs()
+{
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Where to Save the Story Data File"), QDir::currentPath(), tr("XML Files (*.xml)"));
+    if(filePath != "")
+    {
+        qDebug() << "Chosen File: ";
+        qDebug() << filePath;
+        QFile saveFile(filePath);
+        table->SaveStoryData(saveFile);
+    }
 }

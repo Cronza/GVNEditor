@@ -85,6 +85,8 @@ public:
     };
 
     void LoadTableData(QFile &storyFile);
+    void SaveStoryData(QFile &saveFile);
+
 
     ///Builds the table data multidimensional list, and loads default values
     void InitializeTableData(QFile &file);
