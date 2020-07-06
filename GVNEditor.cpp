@@ -50,40 +50,53 @@
 
 /*This script uses generic model references to avoid dependencies on particular files*/
 
-#include "MainWindow.h"
+#include "GVNEditor.h"
 #include "StoryBuilder\ChapterTable.h"
 #include "QDebug"
+#include "QDateTime"
 #include <QFile>
+#include "Utilities\Logger.h"
 
 ///Constructor
-MainWindow::MainWindow() : QMainWindow()
+GVNEditor::GVNEditor() : QMainWindow()
 {
     //Generate the UI C++ from the .ui XML form. Build objects from each of the .ui form widgets
     setupUi(this);
 
+    logger = new Logger(logList);
+
     //----------------- INTERACTIVITY ---------------------
     //Setup functionality for menu bar options
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-    connect(loadStoryFileAction, &QAction::triggered, this, &MainWindow::LoadStoryData);
-    connect(saveStoryFileAsAction, &QAction::triggered, this, &MainWindow::SaveStoryDataAs);
+    connect(loadStoryFileAction, &QAction::triggered, this, &GVNEditor::LoadStoryData);
+    connect(saveStoryFileAsAction, &QAction::triggered, this, &GVNEditor::SaveStoryDataAs);
 
     connect(addEntryButton, SIGNAL (clicked()), this, SLOT(AddChapterTableRow()));
     connect(removeEntryButton, SIGNAL (clicked()), this, SLOT(RemoveChapterTableRow()));
     connect(moveEntryUpButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowUp()));
     connect(moveEntryDownButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowDown()));
+    logger->Log("Connected Interface Buttons");
 
-    //Spawn the chapter table editor
+    //Spawn the editing table
     CreateChapterTable();
+    logger->Log("Created Editing Table");
+
+
+    logger->Log("*** GVNEditor Initialized ***");
 
 }
-MainWindow::~MainWindow()
+GVNEditor::~GVNEditor()
 {
     //delete ui;
 }
 
-void MainWindow::CreateChapterTable()
+void GVNEditor::CreateChapterTable()
 {
+    //Log("Creating the Editing Table");
+
+
     table = new ChapterTable(this);
+    table->logger = logger;
 
     //Initialize the table with some data
     QFile exampleFile(":/examples/Example_Story_Data.xml");
@@ -100,20 +113,20 @@ void MainWindow::CreateChapterTable()
     chapterTableView->show();
 }
 
-void MainWindow::AddChapterTableRow()
+void GVNEditor::AddChapterTableRow()
 {
     QModelIndex index = chapterTableView->selectionModel()->currentIndex();
     table->AddRow(index);
 
 }
 
-void MainWindow::RemoveChapterTableRow()
+void GVNEditor::RemoveChapterTableRow()
 {
     QModelIndex index = chapterTableView->selectionModel()->currentIndex();
     table->RemoveRow(index);
 }
 
-void MainWindow::MoveChapterTableRowUp()
+void GVNEditor::MoveChapterTableRowUp()
 {
     QModelIndex sourceIndex = chapterTableView->selectionModel()->currentIndex();
 
@@ -126,7 +139,7 @@ void MainWindow::MoveChapterTableRowUp()
     }
 }
 
-void MainWindow::MoveChapterTableRowDown()
+void GVNEditor::MoveChapterTableRowDown()
 {
     int numofEntries = table->rowCount(QModelIndex());
     QModelIndex sourceIndex = chapterTableView->selectionModel()->currentIndex();
@@ -140,8 +153,7 @@ void MainWindow::MoveChapterTableRowDown()
     }
 }
 
-///Load a selected XML story file
-void MainWindow::LoadStoryData()
+void GVNEditor::LoadStoryData()
 {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open Story Data File"), QDir::currentPath(), tr("XML Files (*.xml)"));
     if(filePath != "")
@@ -156,7 +168,7 @@ void MainWindow::LoadStoryData()
 
 }
 
-void MainWindow::SaveStoryDataAs()
+void GVNEditor::SaveStoryDataAs()
 {
     QString filePath = QFileDialog::getSaveFileName(this, tr("Where to Save the Story Data File"), QDir::currentPath(), tr("XML Files (*.xml)"));
     if(filePath != "")

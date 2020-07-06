@@ -55,11 +55,11 @@
 #include <QModelIndex>
 #include <QVariant>
 #include <QFile>
+#include "Utilities/Logger.h"
 
 class ChapterTable : public QAbstractTableModel
 {
     Q_OBJECT
-
 
 public:
     ///Constructor
@@ -96,8 +96,11 @@ public:
     void SwapRowData(QModelIndex &sourceIndex, QModelIndex &targetIndex);
 
     QList<QList<QVariant>> tableData;
+    Logger* logger;
 
 private:
+
+
 
 
 

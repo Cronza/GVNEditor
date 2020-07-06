@@ -48,10 +48,12 @@
 **
 ****************************************************************************/
 
+#include "ChapterTable.h"
 #include <QtWidgets>
 #include <QtXml>
 #include <QFile>
-#include "ChapterTable.h"
+#include "GVNEditor.h"
+
 
 ///Constructor
 ChapterTable::ChapterTable(QObject *parent)
@@ -149,6 +151,7 @@ void ChapterTable::AddRow(QModelIndex &index)
 
     //Inform the view that we're done
     endInsertRows();
+    logger->Log("New row added");
 }
 
 void ChapterTable::RemoveRow(QModelIndex &index)
@@ -164,6 +167,7 @@ void ChapterTable::RemoveRow(QModelIndex &index)
 
     //Inform the view that we're done
     endRemoveRows();
+    logger->Log("Row removed");
 
 }
 
@@ -190,6 +194,7 @@ void ChapterTable::SwapRowData(QModelIndex &sourceIndex, QModelIndex &targetInde
     }
 
     emit dataChanged(sourceIndex, targetIndex);
+    logger->Log("Editing table rows swapped position");
 }
 
 void ChapterTable::LoadTableData(QFile &storyFile)
@@ -246,6 +251,7 @@ void ChapterTable::LoadTableData(QFile &storyFile)
 
     //Rebuild the table
     endResetModel();
+    logger->Log("Story file loaded: " + storyFile.fileName());
 }
 
 void ChapterTable::SaveStoryData(QFile &saveFile)
@@ -287,5 +293,7 @@ void ChapterTable::SaveStoryData(QFile &saveFile)
     QTextStream stream(&saveFile);
     stream << xmlDoc.toString();
     saveFile.close();
+
+    logger->Log("Story data file saved to: " + saveFile.fileName());
 }
 

@@ -1,24 +1,20 @@
 QT += widgets
 QT += xml
-#requires(qtConfig(treeview))
 
 FORMS       = \
-    MainWindow.ui
+    GVNEditor.ui
 HEADERS     = \
-    MainWindow.h \
-    MainWindow.h \
-    MainWindow.h \
     StoryBuilder/ChapterTable.h \
-    StoryBuilder/SettingItem.h
+    StoryBuilder/SettingItem.h \
+    GVNEditor.h \
+    Utilities/Logger.h
 RESOURCES   = \
     Resources/Icons/icons.qrc \
-    Resources/Examples/examples.qrc
+    Resources/Examples/examples.qrc \
+    Resources/Templates/templates.qrc
 SOURCES     = \
     StoryBuilder/ChapterTable.cpp \
-    MainWindow.cpp \
     Main.cpp \
-    StoryBuilder/SettingItem.cpp
-
-# install
-# target.path = $$[QT_INSTALL_EXAMPLES]/widgets/itemviews/editabletreemodel
-# INSTALLS += target
+    StoryBuilder/SettingItem.cpp \
+    GVNEditor.cpp \
+    Utilities/Logger.cpp

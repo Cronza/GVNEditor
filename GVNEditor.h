@@ -48,30 +48,28 @@
 **
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef GVNEditor_H
+#define GVNEditor_H
 
-#include "ui_mainwindow.h"
+#include "ui_GVNEditor.h"
 #include "StoryBuilder\ChapterTable.h"
 #include <QMainWindow>
 #include <QModelIndex>
 #include <QFile>
 #include <QFileDialog>
+#include "Utilities/logger.h"
 
-class MainWindow : public QMainWindow, private Ui::MainWindow
+class GVNEditor : public QMainWindow, private Ui::MainWindow
 {
     Q_OBJECT
 
 public:
     // Constructor
-    MainWindow();
-    ~MainWindow();
+    GVNEditor();
+    ~GVNEditor();
 
     ///Creates the Table holding Dialogue Story Data
     void CreateChapterTable();
-
-    //The table object
-    ChapterTable *table;
 
 private slots:
     //Define interactive elements
@@ -82,6 +80,10 @@ private slots:
     void LoadStoryData();
     void SaveStoryDataAs();
 
+private:
+    //Temp variables
+    ChapterTable *table;
+    Logger *logger;
 };
 
-#endif // MAINWINDOW_H
+#endif // GVNEditor_H

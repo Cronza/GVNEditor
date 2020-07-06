@@ -50,7 +50,7 @@
 
 #include <QApplication>
 
-#include "MainWindow.h"
+#include "GVNEditor.h"
 
 int main(int argc, char *argv[])
 {
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     //Build the core window (The GUI interface) and reveal it
-    MainWindow editor;
+    GVNEditor editor;
 
     editor.show();
 
