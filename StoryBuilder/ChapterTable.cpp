@@ -194,7 +194,7 @@ void ChapterTable::SwapRowData(QModelIndex &sourceIndex, QModelIndex &targetInde
     }
 
     emit dataChanged(sourceIndex, targetIndex);
-    logger->Log("Editing table rows swapped position");
+    logger->Log("Swapped rows");
 }
 
 void ChapterTable::LoadTableData(QFile &storyFile)

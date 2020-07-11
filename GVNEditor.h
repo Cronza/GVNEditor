@@ -57,7 +57,8 @@
 #include <QModelIndex>
 #include <QFile>
 #include <QFileDialog>
-#include "Utilities/logger.h"
+#include "Utilities/Logger.h"
+#include "Outliner/Outliner.h"
 
 class GVNEditor : public QMainWindow, private Ui::MainWindow
 {
@@ -84,6 +85,7 @@ private:
     //Temp variables
     ChapterTable *table;
     Logger *logger;
+    Outliner *outliner;
 };
 
 #endif // GVNEditor_H

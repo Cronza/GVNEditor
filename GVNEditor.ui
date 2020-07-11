@@ -134,7 +134,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QListView" name="SceneList"/>
+        <widget class="QTreeView" name="SceneList"/>
        </item>
       </layout>
      </widget>

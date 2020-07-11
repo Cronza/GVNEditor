@@ -63,8 +63,6 @@ GVNEditor::GVNEditor() : QMainWindow()
     //Generate the UI C++ from the .ui XML form. Build objects from each of the .ui form widgets
     setupUi(this);
 
-    logger = new Logger(logList);
-
     //----------------- INTERACTIVITY ---------------------
     //Setup functionality for menu bar options
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
@@ -75,14 +73,18 @@ GVNEditor::GVNEditor() : QMainWindow()
     connect(removeEntryButton, SIGNAL (clicked()), this, SLOT(RemoveChapterTableRow()));
     connect(moveEntryUpButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowUp()));
     connect(moveEntryDownButton, SIGNAL (clicked()), this, SLOT(MoveChapterTableRowDown()));
-    logger->Log("Connected Interface Buttons");
+
+    //Spawn the Logger
+    logger = new Logger(logList);
 
     //Spawn the editing table
     CreateChapterTable();
     logger->Log("Created Editing Table");
 
+    //Spawn the Outliner
+    //outliner = new Outliner
 
-    logger->Log("*** GVNEditor Initialized ***");
+    logger->Log("*** GVN Editor Initialized ***");
 
 }
 GVNEditor::~GVNEditor()
