@@ -1,15 +1,15 @@
-# GVNEditor
+# GVNEditor-Prototype
+The GVNEditor is the visual editor for the GVNEngine. The GVNEditor is intended as a one-stop-shop for developing content for projects using the GVNEngine. This repo was used as a place to prototype an early iteration of the GVNEditor using C++ and Qt.
 
-*This project is heavily in development. The state is subject to persistant change*
+![ScreenShot](README_Files/GVNEditor.png?raw=true "GVNEditor")
 
-The GVNEditor is the visual editor for the GVNEngine. The GVNEditor is intended as a one-stop-shop for developing content for projects using the GVNEngine.
+## Feature List
+### Editing Table
+- Save or load a 'story' XML file. Loading will repopulate the editing table
+- Add / remove rows
+- Move rows up / down
+- Text in every column wraps, allowing for short to long text entries
 
-## Current Features
-
-
-## Planned Features
-- Story Creator
-  - Provides a GUI for creating and editing XML story data that is read by the engine. Allows user to define audio, effects, sprites, and dialogue that will be read into the GVNEngine.
-- Engine Configurator
-  - A GUI to configure the output of the game. This will contain options that allow users to customize the project, such as what settings are available at a consumer level.
+### Logger
+- All editing classes can call a 'Log' function which outputs their message to the logger with a generated datestamp
   
